@@ -74,11 +74,20 @@ curl.exe -X POST "https://api.adlmetbot.adenmgb.com/setup/register-commands" -H 
 | Command | Who | What |
 |---------|-----|------|
 | `/health` | Everyone | Worker + Discord API check (ephemeral) |
-| `/post-verify` | Manage Server | Posts the verify embed in `#rules` |
 | `/timetable` | Everyone | Upcoming rail departures both ways (embed); line + station autocomplete |
 | `/live-trains` | Everyone | Live sets (e.g. 4005), delay status, between-station position from GTFS-RT |
 | `/alerts` | Everyone | Active **train-only** GTFS-RT service alerts (optional `line`) |
 | `/disruption` | Everyone | Same feed, disruption-focused title (optional `line`) |
+| `/fact` | Everyone | Adelaide Metro trivia via NVIDIA DeepSeek (`NVIDIA_API_KEY`; optional `topic`) |
+
+Set `NVIDIA_API_KEY` in `.dev.vars` locally and `pnpm wrangler secret put NVIDIA_API_KEY` in production (from [NVIDIA build](https://build.nvidia.com/)).
+
+Local smoke test:
+
+```bash
+export NVIDIA_API_KEY='…'
+python3 scripts/nvidia_chat.py "one fact about the Gawler line"
+```
 
 ### Train disruption posts (Ubuntu cron)
 
@@ -122,8 +131,6 @@ Re-run the import every week or so (or before each GTFS drop) so cached departur
 `live-trains` also needs migration `0002_rail_live` and a GTFS import that fills `rail_trips` / `rail_trip_stops` (same import script as timetable).
 
 ## Post the verify embed (once)
-
-HTTP alternative to `/post-verify`:
 
 ```powershell
 curl.exe -X POST "https://api.adlmetbot.adenmgb.com/setup/verify-embed" -H "Authorization: Bearer YOUR_SETUP_SECRET"

@@ -6,12 +6,6 @@ export const GUILD_COMMANDS = [
 		type: 1,
 	},
 	{
-		name: "post-verify",
-		description: "Post the verification embed in #rules",
-		type: 1,
-		default_member_permissions: "32", // Manage Server
-	},
-	{
 		name: "timetable",
 		description: "Upcoming train departures for an Adelaide Metro line and station",
 		type: 1,
@@ -99,6 +93,19 @@ export const GUILD_COMMANDS = [
 				type: 3,
 				required: false,
 				autocomplete: true,
+			},
+		],
+	},
+	{
+		name: "fact",
+		description: "Random Adelaide Metro / transport trivia (NVIDIA AI)",
+		type: 1,
+		options: [
+			{
+				name: "topic",
+				description: "Optional focus (e.g. Seaford, 3000 class, City Loop)",
+				type: 3,
+				required: false,
 			},
 		],
 	},

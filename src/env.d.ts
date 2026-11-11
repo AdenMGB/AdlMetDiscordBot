@@ -12,5 +12,7 @@ export interface WorkerEnv {
 	SETUP_SECRET: string;
 	/** Bearer token for POST /alerts/push (falls back to SETUP_SECRET). */
 	ALERTS_CRON_SECRET?: string;
+	/** NVIDIA integrate API for `/fact` (https://integrate.api.nvidia.com/v1). */
+	NVIDIA_API_KEY?: string;
 	DB?: D1Database;
 }

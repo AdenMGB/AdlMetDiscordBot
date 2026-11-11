@@ -11,6 +11,7 @@ import {
 	VERIFY_EMBED,
 } from "./config";
 import { handleAlertsAutocomplete, handleAlertsSlashCommand } from "./alerts-command";
+import { handleFactCommand } from "./fact-command";
 import {
 	addRole,
 	fetchBotIdentity,
@@ -20,7 +21,6 @@ import {
 } from "./discord-api";
 import { pushNewRailAlerts } from "./transit/service-alerts";
 import type { WorkerEnv } from "./env.d";
-import { canManageServer } from "./permissions";
 import {
 	handleLiveTrainsAutocomplete,
 	handleLiveTrainsCommand,
@@ -118,6 +118,15 @@ async function handleSlashCommand(
 		return handleAlertsSlashCommand(interaction, "disruption");
 	}
 
+	if (name === "fact") {
+		return handleFactCommand(
+			interaction,
+			env,
+			env.DISCORD_APPLICATION_ID,
+			ctx,
+		);
+	}
+
 	if (name === "health") {
 		const checks: string[] = ["Worker: **online**"];
 		try {
@@ -129,26 +138,6 @@ async function handleSlashCommand(
 		}
 		checks.push(`Rules channel: <#${env.VERIFY_CHANNEL_ID}>`);
 		return ephemeral(["**Metro Mate health**", ...checks].join("\n"));
-	}
-
-	if (name === "post-verify") {
-		if (!canManageServer(interaction.member?.permissions)) {
-			return ephemeral("You need **Manage Server** to run this command.");
-		}
-		try {
-			const message = await postVerifyMessage(
-				env.DISCORD_BOT_TOKEN,
-				env.VERIFY_CHANNEL_ID,
-				VERIFY_EMBED,
-				VERIFY_BUTTON_ID,
-			);
-			return ephemeral(
-				`Posted verification embed in <#${env.VERIFY_CHANNEL_ID}> (message \`${message.id}\`).`,
-			);
-		} catch (error) {
-			const message = error instanceof Error ? error.message : "Unknown error";
-			return ephemeral(`Could not post embed: ${message}`);
-		}
 	}
 
 	return ephemeral("Unknown slash command.");

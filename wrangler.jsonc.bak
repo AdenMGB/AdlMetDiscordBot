@@ -1,0 +1,64 @@
+/**
+ * For more details on how to configure Wrangler, refer to:
+ * https://developers.cloudflare.com/workers/wrangler/configuration/
+ */
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "adlmetbot",
+	"main": "src/index.ts",
+	"compatibility_date": "2026-11-10",
+	"observability": {
+		"enabled": true
+	},
+	"vars": {
+		"DISCORD_APPLICATION_ID": "1569963528171815023",
+		"DISCORD_PUBLIC_KEY": "a35bc16bf15aa6751d7199467ccb37ab784eb0ad216b669797c9121270aa024f",
+		"VERIFY_CHANNEL_ID": "1569953806291308615",
+		"ALERTS_CHANNEL_ID": "1570043584474779699",
+		"DISRUPTIONS_ROLE_ID": "1570044646372024443"
+	},
+	"routes": [
+		{
+			"pattern": "api.adlmetbot.adenmgb.com",
+			"custom_domain": true
+		}
+	],
+	"upload_source_maps": true,
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "adlmetbot-gtfs",
+			"database_id": "ed604f12-552e-4753-a77e-0616d61bc0a2",
+			"migrations_dir": "migrations",
+			"remote": true
+		}
+	]
+	/**
+	 * Smart Placement
+	 * https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement
+	 */
+	// "placement": {  "mode": "smart" }
+	/**
+	 * Bindings
+	 * Bindings allow your Worker to interact with resources on the Cloudflare Developer Platform, including
+	 * databases, object storage, AI inference, real-time communication and more.
+	 * https://developers.cloudflare.com/workers/runtime-apis/bindings/
+	 */
+	/**
+	 * Environment Variables
+	 * https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables
+	 * Note: Use secrets to store sensitive data.
+	 * https://developers.cloudflare.com/workers/configuration/secrets/
+	 */
+	// "vars": {  "MY_VARIABLE": "production_value" }
+	/**
+	 * Static Assets
+	 * https://developers.cloudflare.com/workers/static-assets/binding/
+	 */
+	// "assets": {  "directory": "./public/",  "binding": "ASSETS" }
+	/**
+	 * Service Bindings (communicate between multiple Workers)
+	 * https://developers.cloudflare.com/workers/wrangler/configuration/#service-bindings
+	 */
+	// "services": [  {   "binding": "MY_SERVICE",   "service": "my-service"  } ]
+}
