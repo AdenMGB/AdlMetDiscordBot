@@ -1,3 +1,5 @@
+import type { D1Database } from "@cloudflare/workers-types";
+
 export interface WorkerEnv {
 	DISCORD_APPLICATION_ID: string;
 	DISCORD_PUBLIC_KEY: string;
@@ -5,5 +7,10 @@ export interface WorkerEnv {
 	GUILD_ID: string;
 	VERIFIED_ROLE_ID: string;
 	VERIFY_CHANNEL_ID: string;
+	ALERTS_CHANNEL_ID: string;
+	DISRUPTIONS_ROLE_ID: string;
 	SETUP_SECRET: string;
+	/** Bearer token for POST /alerts/push (falls back to SETUP_SECRET). */
+	ALERTS_CRON_SECRET?: string;
+	DB?: D1Database;
 }

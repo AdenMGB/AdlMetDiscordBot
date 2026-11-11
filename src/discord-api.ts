@@ -85,6 +85,54 @@ export async function registerGuildCommands(
 	}
 }
 
+export async function postChannelMessage(
+	token: string,
+	channelId: string,
+	payload: {
+		content?: string;
+		embeds?: unknown[];
+		components?: unknown[];
+		allowed_mentions?: { parse?: string[]; roles?: string[] };
+		mentionRoleIds?: string[];
+	},
+): Promise<{ id: string }> {
+	const { mentionRoleIds, ...rest } = payload;
+	const response = await discordFetch(token, `/channels/${channelId}/messages`, {
+		method: "POST",
+		body: JSON.stringify({
+			...rest,
+			allowed_mentions: rest.allowed_mentions ?? {
+				parse: [],
+				roles: mentionRoleIds ?? [],
+			},
+		}),
+	});
+	if (!response.ok) {
+		const body = await response.text();
+		throw new Error(`Failed to post channel message (${response.status}): ${body}`);
+	}
+	return (await response.json()) as { id: string };
+}
+
+export async function editInteractionResponse(
+	applicationId: string,
+	interactionToken: string,
+	data: { content?: string; embeds?: unknown[]; flags?: number },
+): Promise<void> {
+	const response = await fetch(
+		`${DISCORD_API}/webhooks/${applicationId}/${interactionToken}/messages/@original`,
+		{
+			method: "PATCH",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify(data),
+		},
+	);
+	if (!response.ok) {
+		const body = await response.text();
+		throw new Error(`Failed to edit interaction (${response.status}): ${body}`);
+	}
+}
+
 export async function fetchBotIdentity(
 	token: string,
 ): Promise<{ id: string; username: string }> {

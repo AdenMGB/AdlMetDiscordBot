@@ -4,3 +4,6 @@ node_modules/
 .dev.vars.local
 dist/
 *.log
+/data/rail-gtfs-import.sql
+/data/alerts-cron.log
+.alerts-cron.env

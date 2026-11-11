@@ -75,6 +75,51 @@ curl.exe -X POST "https://api.adlmetbot.adenmgb.com/setup/register-commands" -H 
 |---------|-----|------|
 | `/health` | Everyone | Worker + Discord API check (ephemeral) |
 | `/post-verify` | Manage Server | Posts the verify embed in `#rules` |
+| `/timetable` | Everyone | Upcoming rail departures both ways (embed); line + station autocomplete |
+| `/live-trains` | Everyone | Live sets (e.g. 4005), delay status, between-station position from GTFS-RT |
+| `/alerts` | Everyone | Active **train-only** GTFS-RT service alerts (optional `line`) |
+| `/disruption` | Everyone | Same feed, disruption-focused title (optional `line`) |
+
+### Train disruption posts (Ubuntu cron)
+
+`ALERTS_CHANNEL_ID` and `DISRUPTIONS_ROLE_ID` are in `wrangler.jsonc` (override via secrets if needed).
+
+1. Deploy, then set `ALERTS_CRON_SECRET` (or reuse `SETUP_SECRET`):
+
+```powershell
+pnpm wrangler secret put ALERTS_CRON_SECRET
+pnpm wrangler d1 migrations apply adlmetbot-gtfs --remote
+```
+
+2. On your Ubuntu box:
+
+```bash
+chmod +x scripts/push-alerts-cron.sh scripts/install-alerts-cron.sh
+# edit .alerts-cron.env with ALERTS_CRON_SECRET
+./scripts/install-alerts-cron.sh
+```
+
+Every **5 minutes** the cron job calls `POST /alerts/push`, which posts **new** train-related alerts to the disruptions channel and pings **Disruptions Alerts**.
+
+Manual test: `./scripts/push-alerts-cron.sh`
+
+### Timetable data (D1 + GTFS)
+
+1. Create the D1 database (once): `pnpm wrangler d1 create adlmetbot-gtfs` and set `database_id` in `wrangler.jsonc`.
+2. Apply migrations: `pnpm wrangler d1 migrations apply adlmetbot-gtfs --local` (add `--remote` for production).
+3. Import Adelaide Metro static GTFS into D1:
+
+```powershell
+python3 scripts/import-rail-gtfs.py --apply-remote
+```
+
+With `"remote": true` on the D1 binding in `wrangler.jsonc`, **`pnpm dev` uses the remote database** — you usually only need `--apply-remote`, not `--apply-local`.
+
+Optional local SQLite copy (e.g. fully offline tests): `--apply-local` runs migrations on local D1 first, then loads the SQL file.
+
+Re-run the import every week or so (or before each GTFS drop) so cached departures stay current.
+
+`live-trains` also needs migration `0002_rail_live` and a GTFS import that fills `rail_trips` / `rail_trip_stops` (same import script as timetable).
 
 ## Post the verify embed (once)
 

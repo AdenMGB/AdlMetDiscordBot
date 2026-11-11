@@ -11,6 +11,97 @@ export const GUILD_COMMANDS = [
 		type: 1,
 		default_member_permissions: "32", // Manage Server
 	},
+	{
+		name: "timetable",
+		description: "Upcoming train departures for an Adelaide Metro line and station",
+		type: 1,
+		options: [
+			{
+				name: "line",
+				description:
+					"Train line (Gawler, Seaford, Flinders, Outer Harbor, Grange, Port Dock, Belair)",
+				type: 3,
+				required: true,
+				autocomplete: true,
+			},
+			{
+				name: "station",
+				description: "Station on that line",
+				type: 3,
+				required: true,
+				autocomplete: true,
+			},
+			{
+				name: "time",
+				description: "Adelaide time to show departures from (e.g. 14:30 or 2:45pm)",
+				type: 3,
+				required: false,
+			},
+			{
+				name: "date",
+				description: "Date for the timetable (YYYY-MM-DD or DD/MM/YYYY; default today)",
+				type: 3,
+				required: false,
+			},
+			{
+				name: "count",
+				description: "How many departures to show (split both ways, default 6)",
+				type: 4,
+				required: false,
+				min_value: 2,
+				max_value: 20,
+			},
+		],
+	},
+	{
+		name: "live-trains",
+		description: "Live train sets, status, and where they are on the network",
+		type: 1,
+		options: [
+			{
+				name: "line",
+				description: "Filter to one line (optional — omit for all lines)",
+				type: 3,
+				required: false,
+				autocomplete: true,
+			},
+			{
+				name: "set",
+				description: "Filter to one train set (autocomplete lists live sets)",
+				type: 3,
+				required: false,
+				autocomplete: true,
+			},
+		],
+	},
+	{
+		name: "alerts",
+		description: "Current train service alerts from Adelaide Metro (GTFS-RT)",
+		type: 1,
+		options: [
+			{
+				name: "line",
+				description: "Filter to one train line (optional)",
+				type: 3,
+				required: false,
+				autocomplete: true,
+			},
+		],
+	},
+	{
+		name: "disruption",
+		description: "Train disruptions — same feed, disruption-focused view",
+		type: 1,
+		options: [
+			{
+				name: "line",
+				description: "Filter to one train line (e.g. Seaford)",
+				type: 3,
+				required: false,
+				autocomplete: true,
+			},
+		],
+	},
 ] as const;
 
 export type SlashCommandName = (typeof GUILD_COMMANDS)[number]["name"];

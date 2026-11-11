@@ -8,17 +8,21 @@
 		"dev": "wrangler dev",
 		"start": "wrangler dev",
 		"register-commands": "node scripts/register-commands.mjs",
+		"import-gtfs": "python3 scripts/import-rail-gtfs.py",
+		"import-gtfs:local": "python3 scripts/import-rail-gtfs.py --apply-local",
 		"test": "vitest",
 		"cf-typegen": "wrangler types"
 	},
 	"devDependencies": {
 		"@cloudflare/vitest-plugin": "^1.4.3",
+		"@cloudflare/workers-types": "^5.20261110.1",
 		"@types/node": "^26.6.6",
 		"typescript": "^5.5.2",
 		"vitest": "~5.0.3",
 		"wrangler": "^4.160.0"
 	},
 	"dependencies": {
-		"discord-interactions": "^4.4.0"
+		"discord-interactions": "^4.4.0",
+		"gtfs-realtime-bindings": "^2.2.0"
 	}
 }
