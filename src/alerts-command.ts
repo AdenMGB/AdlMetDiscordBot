@@ -3,11 +3,15 @@ import {
 	InteractionResponseType,
 } from "discord-interactions";
 import { isRailLineId, lineChoiceList, RAIL_LINES, type RailLineId } from "./transit/lines";
+import { editInteractionResponse } from "./discord-api";
 import { disruptionSubscribeComponents } from "./config";
 import {
-	fetchRailAlerts,
+	fetchServiceAlerts,
 	filterAlertsByLine,
-	formatAlertEmbed,
+	filterAlertsByMode,
+	formatAlertDiscordPayload,
+	isAlertMode,
+	type AlertMode,
 } from "./transit/service-alerts";
 
 type InteractionOption = {
@@ -18,10 +22,17 @@ type InteractionOption = {
 };
 
 type CommandInteraction = {
+	token?: string;
 	data?: {
 		name?: string;
 		options?: InteractionOption[];
 	};
+};
+
+const MODE_LABEL: Record<AlertMode, string> = {
+	train: "Train",
+	bus: "Bus",
+	tram: "Tram",
 };
 
 function json(data: unknown): Response {
@@ -44,10 +55,21 @@ function stringOption(
 export async function handleAlertsAutocomplete(
 	interaction: CommandInteraction,
 ): Promise<Response> {
+	const commandName = interaction.data?.name;
 	const options = interaction.data?.options ?? [];
 	const focused = options.find((o) => o.focused);
 	const query = focused?.value !== undefined ? String(focused.value) : "";
+
 	if (focused?.name === "line") {
+		if (commandName === "disruption") {
+			const modeRaw = stringOption(options, "type");
+			if (modeRaw !== "train") {
+				return json({
+					type: InteractionResponseType.APPLICATION_COMMAND_AUTOCOMPLETE_RESULT,
+					data: { choices: [] },
+				});
+			}
+		}
 		return json({
 			type: InteractionResponseType.APPLICATION_COMMAND_AUTOCOMPLETE_RESULT,
 			data: {
@@ -64,53 +86,111 @@ export async function handleAlertsAutocomplete(
 	});
 }
 
-export async function handleAlertsSlashCommand(
+export function handleAlertsSlashCommand(
 	interaction: CommandInteraction,
 	commandName: "alerts" | "disruption",
-): Promise<Response> {
-	const lineRaw = stringOption(interaction.data?.options, "line");
-	const lineFilter =
+	applicationId: string,
+	ctx: { waitUntil(promise: Promise<unknown>): void },
+): Response {
+	const options = interaction.data?.options;
+
+	let modeFilter: AlertMode | null = null;
+	if (commandName === "disruption") {
+		const modeRaw = stringOption(options, "type");
+		if (!modeRaw || !isAlertMode(modeRaw)) {
+			return json({
+				type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+				data: {
+					content: "Choose **type**: Train, Bus, or Tram.",
+					flags: InteractionResponseFlags.EPHEMERAL,
+				},
+			});
+		}
+		modeFilter = modeRaw;
+	}
+
+	const lineRaw = stringOption(options, "line");
+	const lineFilter: RailLineId | null =
 		lineRaw && isRailLineId(lineRaw) ? lineRaw : null;
 	if (lineRaw && !lineFilter) {
 		return json({
 			type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
 			data: {
-				content: "Pick a valid **line** from autocomplete, or leave it blank for all rail lines.",
+				content: "Pick a valid **line** from autocomplete, or leave it blank.",
 				flags: InteractionResponseFlags.EPHEMERAL,
 			},
 		});
 	}
 
-	try {
-		const alerts = filterAlertsByLine(await fetchRailAlerts(), lineFilter, true);
-		const title =
-			commandName === "disruption" ?
-				lineFilter ?
-					`Disruptions — ${RAIL_LINES[lineFilter].label}`
-				:	"Train disruptions"
-			: lineFilter ?
-				`Rail alerts — ${RAIL_LINES[lineFilter].label}`
-			:	"Rail service alerts";
-
-		const data: Record<string, unknown> = {
-			embeds: [formatAlertEmbed(alerts, title)],
-		};
-		if (commandName === "disruption") {
-			data.components = disruptionSubscribeComponents();
-		}
-
-		return json({
-			type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-			data,
-		});
-	} catch (error) {
-		const message = error instanceof Error ? error.message : "Could not load alerts";
+	if (commandName === "disruption" && modeFilter !== "train" && lineFilter) {
 		return json({
 			type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
 			data: {
-				content: `Alerts unavailable: ${message}`,
+				content: "**Line** only applies when **type** is Train — pick a line or leave it blank.",
 				flags: InteractionResponseFlags.EPHEMERAL,
 			},
 		});
 	}
+
+	const token = interaction.token;
+	if (!token) {
+		return json({
+			type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+			data: {
+				content: "Could not read interaction token.",
+				flags: InteractionResponseFlags.EPHEMERAL,
+			},
+		});
+	}
+
+	const effectiveLineFilter =
+		commandName === "disruption" && modeFilter !== "train" ? null : lineFilter;
+
+	ctx.waitUntil(
+		(async () => {
+			try {
+				let alerts = await fetchServiceAlerts();
+				if (modeFilter) {
+					alerts = filterAlertsByMode(alerts, modeFilter);
+				}
+				alerts = filterAlertsByLine(alerts, effectiveLineFilter, true);
+
+				const title =
+					commandName === "disruption" && modeFilter ?
+						effectiveLineFilter ?
+							`${MODE_LABEL[modeFilter]} disruptions — ${RAIL_LINES[effectiveLineFilter].label}`
+						:	`${MODE_LABEL[modeFilter]} disruptions`
+					: effectiveLineFilter ?
+						`Service alerts — ${RAIL_LINES[effectiveLineFilter].label} (+ bus & tram)`
+					:	"Train, bus & tram service alerts";
+
+				const formatted = formatAlertDiscordPayload(alerts, title);
+				const payload: {
+					content?: string;
+					embeds: Record<string, unknown>[];
+					components?: ReturnType<typeof disruptionSubscribeComponents>;
+				} = {
+					embeds: formatted.embeds,
+				};
+				if (formatted.content) {
+					payload.content = formatted.content;
+				}
+				if (commandName === "disruption") {
+					payload.components = disruptionSubscribeComponents();
+				}
+
+				await editInteractionResponse(applicationId, token, payload);
+			} catch (error) {
+				const message = error instanceof Error ? error.message : "Could not load alerts";
+				await editInteractionResponse(applicationId, token, {
+					content: `Alerts unavailable: ${message}`,
+				});
+			}
+		})(),
+	);
+
+	return json({
+		type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE,
+		data: {},
+	});
 }

@@ -19,7 +19,7 @@ import {
 	postVerifyMessage,
 	registerGuildCommands,
 } from "./discord-api";
-import { pushNewRailAlerts } from "./transit/service-alerts";
+import { pushNewServiceAlerts } from "./transit/service-alerts";
 import type { WorkerEnv } from "./env.d";
 import {
 	handleLiveTrainsAutocomplete,
@@ -111,11 +111,21 @@ async function handleSlashCommand(
 	}
 
 	if (name === "alerts") {
-		return handleAlertsSlashCommand(interaction, "alerts");
+		return handleAlertsSlashCommand(
+			interaction,
+			"alerts",
+			env.DISCORD_APPLICATION_ID,
+			ctx,
+		);
 	}
 
 	if (name === "disruption") {
-		return handleAlertsSlashCommand(interaction, "disruption");
+		return handleAlertsSlashCommand(
+			interaction,
+			"disruption",
+			env.DISCORD_APPLICATION_ID,
+			ctx,
+		);
 	}
 
 	if (name === "fact") {
@@ -159,7 +169,7 @@ async function handleDisruptionsSubscribeButton(
 	const roles = interaction.member?.roles ?? [];
 	if (roles.includes(env.DISRUPTIONS_ROLE_ID)) {
 		return ephemeral(
-			"You already have **Disruptions Alerts** — you'll be pinged when new train disruptions are posted.",
+			"You already have **Disruptions Alerts** — you'll be pinged when new train, bus, or tram disruptions are posted.",
 		);
 	}
 
@@ -184,7 +194,7 @@ async function handleDisruptionsSubscribeButton(
 	}
 
 	return ephemeral(
-		"Done — you have **Disruptions Alerts** and will be pinged for future train disruptions. 🚆",
+		"Done — you have **Disruptions Alerts** and will be pinged for future train, bus, and tram disruptions. 🚆🚌🚋",
 	);
 }
 
@@ -270,7 +280,7 @@ export default {
 			}
 			try {
 				const roleId = env.DISRUPTIONS_ROLE_ID ?? "";
-				const result = await pushNewRailAlerts(
+				const result = await pushNewServiceAlerts(
 					env.DB,
 					async (payload) => {
 						await postChannelMessage(env.DISCORD_BOT_TOKEN, env.ALERTS_CHANNEL_ID, {

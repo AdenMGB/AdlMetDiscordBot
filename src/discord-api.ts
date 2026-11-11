@@ -117,7 +117,12 @@ export async function postChannelMessage(
 export async function editInteractionResponse(
 	applicationId: string,
 	interactionToken: string,
-	data: { content?: string; embeds?: unknown[]; flags?: number },
+	data: {
+		content?: string;
+		embeds?: unknown[];
+		components?: unknown[];
+		flags?: number;
+	},
 ): Promise<void> {
 	const response = await fetch(
 		`${DISCORD_API}/webhooks/${applicationId}/${interactionToken}/messages/@original`,

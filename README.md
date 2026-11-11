@@ -76,8 +76,8 @@ curl.exe -X POST "https://api.adlmetbot.adenmgb.com/setup/register-commands" -H 
 | `/health` | Everyone | Worker + Discord API check (ephemeral) |
 | `/timetable` | Everyone | Upcoming rail departures both ways (embed); line + station autocomplete |
 | `/live-trains` | Everyone | Live sets (e.g. 4005), delay status, between-station position from GTFS-RT |
-| `/alerts` | Everyone | Active **train-only** GTFS-RT service alerts (optional `line`) |
-| `/disruption` | Everyone | Same feed, disruption-focused title (optional `line`) |
+| `/alerts` | Everyone | Active **train, bus & tram** GTFS-RT service alerts (optional `line` filters trains) |
+| `/disruption` | Everyone | Required **type** (train / bus / tram); optional **line** (train only) |
 | `/fact` | Everyone | Adelaide Metro trivia via NVIDIA DeepSeek (`NVIDIA_API_KEY`; optional `topic`) |
 
 Set `NVIDIA_API_KEY` in `.dev.vars` locally and `pnpm wrangler secret put NVIDIA_API_KEY` in production (from [NVIDIA build](https://build.nvidia.com/)).
@@ -89,7 +89,7 @@ export NVIDIA_API_KEY='…'
 python3 scripts/nvidia_chat.py "one fact about the Gawler line"
 ```
 
-### Train disruption posts (Ubuntu cron)
+### Disruption posts (Ubuntu cron)
 
 `ALERTS_CHANNEL_ID` and `DISRUPTIONS_ROLE_ID` are in `wrangler.jsonc` (override via secrets if needed).
 
@@ -108,7 +108,7 @@ chmod +x scripts/push-alerts-cron.sh scripts/install-alerts-cron.sh
 ./scripts/install-alerts-cron.sh
 ```
 
-Every **5 minutes** the cron job calls `POST /alerts/push`, which posts **new** train-related alerts to the disruptions channel and pings **Disruptions Alerts**.
+Every **5 minutes** the cron job calls `POST /alerts/push`, which posts **new** train, bus, and tram alerts to the disruptions channel and pings **Disruptions Alerts**.
 
 Manual test: `./scripts/push-alerts-cron.sh`
 

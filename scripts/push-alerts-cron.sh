@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Calls Metro Mate POST /alerts/push (train-only GTFS-RT alerts → Discord).
+# Calls Metro Mate POST /alerts/push (train, bus & tram GTFS-RT alerts → Discord).
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"

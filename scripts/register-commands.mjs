@@ -72,7 +72,7 @@ const COMMANDS = [
 	},
 	{
 		name: "alerts",
-		description: "Current train service alerts from Adelaide Metro (GTFS-RT)",
+		description: "Train, bus & tram service alerts from Adelaide Metro (GTFS-RT)",
 		type: 1,
 		options: [
 			{
@@ -86,12 +86,23 @@ const COMMANDS = [
 	},
 	{
 		name: "disruption",
-		description: "Train disruptions — same feed, disruption-focused view",
+		description: "Disruptions for train, bus, or tram (GTFS-RT)",
 		type: 1,
 		options: [
 			{
+				name: "type",
+				description: "Train, bus, or tram",
+				type: 3,
+				required: true,
+				choices: [
+					{ name: "Train", value: "train" },
+					{ name: "Bus", value: "bus" },
+					{ name: "Tram", value: "tram" },
+				],
+			},
+			{
 				name: "line",
-				description: "Filter to one train line (e.g. Seaford)",
+				description: "Train only — filter to one line (optional)",
 				type: 3,
 				required: false,
 				autocomplete: true,
