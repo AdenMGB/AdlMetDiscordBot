@@ -1,5 +1,6 @@
 import {
 	buildMentionChatMessages,
+	defaultMaxTokensForQuestion,
 	MENTION_THINKING_TEXT,
 	nvidiaChatCompletion,
 	stripBotMention,
@@ -84,7 +85,7 @@ export async function processMentionChat(
 			userQuestion: question,
 		});
 		const answer = await nvidiaChatCompletion(apiKey, messages, {
-			maxTokens: 700,
+			maxTokens: defaultMaxTokensForQuestion(question, 400),
 			timeoutMs: 50_000,
 		});
 		await finish(answer);

@@ -36,7 +36,7 @@ export function readConfig() {
 			100,
 			Math.max(5, Number(process.env.CONTEXT_MESSAGE_LIMIT ?? "20") || 20),
 		),
-		nvidiaMaxTokens: Math.min(4096, Math.max(64, Number(process.env.NVIDIA_MAX_TOKENS ?? "700") || 700)),
+		nvidiaMaxTokens: Math.min(4096, Math.max(64, Number(process.env.NVIDIA_MAX_TOKENS ?? "400") || 400)),
 		editThrottleMs: Math.min(5000, Math.max(400, Number(process.env.EDIT_THROTTLE_MS ?? "900") || 900)),
 		systemPrompt: resolveChatPersona(process.env.CHAT_PERSONA),
 	};

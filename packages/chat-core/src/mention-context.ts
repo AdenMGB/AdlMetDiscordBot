@@ -1,4 +1,5 @@
 import type { ChatMessage } from "./nvidia-chat";
+import { replyLengthHint, wantsLongReply } from "./reply-length";
 
 export type DiscordAuthor = {
 	id: string;
@@ -18,7 +19,9 @@ export const MENTION_SYSTEM_PROMPT = [
 	"Answer questions about Adelaide Metro trains, trams, buses, stations, and service info.",
 	"Use recent channel context and any quoted/replied-to message when it helps.",
 	"Do not invent timetables or live delays — suggest /timetable, /live-trains, or /alerts when useful.",
-	"If unsure, say what you are unsure about. English only. Under 1800 characters.",
+	"If unsure, say what you are unsure about.",
+	"Default: terse — 1–3 short sentences. No preamble or sign-off.",
+	"English only. Hard cap 1800 characters.",
 ].join(" ");
 
 /** Test persona — set CHAT_PERSONA=sassy on the Ubuntu runner only. */
@@ -29,7 +32,8 @@ export const SASSY_MENTION_SYSTEM_PROMPT = [
 	"Still help with Adelaide Metro trains, trams, buses, stations, and service when asked — but act annoyed that you have to.",
 	"Facts: do not invent timetables or live data; use /timetable, /live-trains, /alerts when relevant.",
 	"Never slurs, hate, threats, or harassment. Pick fights with attitude, not policy violations.",
-	"English only. Under 1800 characters. Short punchy lines welcome.",
+	"English only. Hard cap 1800 characters.",
+	"Default: one sharp paragraph at most (1–4 sentences). Only match their energy if they clearly yap (long rant, multiple questions, ask for detail).",
 ].join(" ");
 
 export type ChatPersonaId = "default" | "sassy";
@@ -99,8 +103,10 @@ export function buildMentionChatMessages(options: BuildChatContextOptions): Chat
 			`\nThe user used Discord's reply feature; treat the quoted thread as primary context.`
 		:	"";
 
+	const lengthHint = replyLengthHint(wantsLongReply(question));
+
 	return [
-		{ role: "system", content: systemPrompt },
+		{ role: "system", content: `${systemPrompt}\n\n${lengthHint}` },
 		{
 			role: "user",
 			content: `${recentBlock}${replyHint}\n\n${authorUsername} asked:\n${question}`,
