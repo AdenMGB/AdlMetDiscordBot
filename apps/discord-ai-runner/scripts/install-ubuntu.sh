@@ -25,6 +25,7 @@ echo "Installing workspace dependencies from $REPO_ROOT …"
 )
 
 PNPM_BIN="$(command -v pnpm)"
+NODE_BIN_DIR="$(dirname "$(command -v node)")"
 
 cat >"$UNIT_PATH" <<EOF
 [Unit]
@@ -36,6 +37,7 @@ Wants=network-online.target
 Type=simple
 WorkingDirectory=$ROOT
 Environment=NODE_ENV=production
+Environment=PATH=$NODE_BIN_DIR:/usr/bin:/bin
 EnvironmentFile=$ENV_FILE
 ExecStart=$PNPM_BIN --dir $ROOT start
 Restart=on-failure
