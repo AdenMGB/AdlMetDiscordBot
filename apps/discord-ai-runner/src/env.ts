@@ -1,4 +1,4 @@
-import { NVIDIA_DEFAULT_MODEL } from "@metro-mate/chat-core";
+import { NVIDIA_DEFAULT_MODEL, resolveChatPersona } from "@metro-mate/chat-core";
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -38,6 +38,7 @@ export function readConfig() {
 		),
 		nvidiaMaxTokens: Math.min(4096, Math.max(64, Number(process.env.NVIDIA_MAX_TOKENS ?? "700") || 700)),
 		editThrottleMs: Math.min(5000, Math.max(400, Number(process.env.EDIT_THROTTLE_MS ?? "900") || 900)),
+		systemPrompt: resolveChatPersona(process.env.CHAT_PERSONA),
 	};
 }
 

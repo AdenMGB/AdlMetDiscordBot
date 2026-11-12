@@ -146,6 +146,7 @@ export async function processGatewayMessage(
 			botUserId,
 			authorUsername: message.author.username,
 			userQuestion: question,
+			systemPrompt: config.systemPrompt,
 		});
 
 		const answer = await nvidiaChatCompletion(config.nvidiaApiKey, chatMessages, {
