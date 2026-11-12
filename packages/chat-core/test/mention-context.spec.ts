@@ -2,10 +2,16 @@ import { describe, expect, it } from "vitest";
 import {
 	buildMentionChatMessages,
 	buildMentionChatMessagesLegacy,
+	resolveChatPersona,
+	SASSY_MENTION_SYSTEM_PROMPT,
 	truncateDiscordContent,
 } from "../src/index";
 
 describe("mention context", () => {
+	it("sassy persona prompt is selectable", () => {
+		expect(resolveChatPersona("sassy")).toBe(SASSY_MENTION_SYSTEM_PROMPT);
+		expect(resolveChatPersona("default")).not.toContain("moral high ground");
+	});
 	it("legacy builder matches structured builder", () => {
 		const prior = [
 			{

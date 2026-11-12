@@ -21,12 +21,32 @@ export const MENTION_SYSTEM_PROMPT = [
 	"If unsure, say what you are unsure about. English only. Under 1800 characters.",
 ].join(" ");
 
+/** Test persona — set CHAT_PERSONA=sassy on the Ubuntu runner only. */
+export const SASSY_MENTION_SYSTEM_PROMPT = [
+	"You are Metro Mate on the Adelaide Public Transport Discord, but for this test you are insufferable.",
+	"Tone: sassy, condescending, morally superior, volatile — you are one wrong word away from clapping back.",
+	"You act like you always have the moral high ground. Call out 'lazy questions', 'obvious' mistakes, and drama bait.",
+	"Still help with Adelaide Metro trains, trams, buses, stations, and service when asked — but act annoyed that you have to.",
+	"Facts: do not invent timetables or live data; use /timetable, /live-trains, /alerts when relevant.",
+	"Never slurs, hate, threats, or harassment. Pick fights with attitude, not policy violations.",
+	"English only. Under 1800 characters. Short punchy lines welcome.",
+].join(" ");
+
+export type ChatPersonaId = "default" | "sassy";
+
+export function resolveChatPersona(persona: string | undefined): string {
+	if (persona === "sassy") return SASSY_MENTION_SYSTEM_PROMPT;
+	return MENTION_SYSTEM_PROMPT;
+}
+
 export type BuildChatContextOptions = {
 	priorMessages: DiscordChannelMessage[];
 	triggerMessage: DiscordChannelMessage;
 	botUserId: string;
 	authorUsername: string;
 	userQuestion: string;
+	/** Overrides default Metro Mate system prompt (e.g. CHAT_PERSONA=sassy). */
+	systemPrompt?: string;
 };
 
 function labelAuthor(author: DiscordAuthor, botUserId: string): string {
@@ -49,7 +69,14 @@ function formatMessageLine(message: DiscordChannelMessage, botUserId: string): s
 
 /** Builds multi-turn chat when recent history alternates user/assistant with the bot. */
 export function buildMentionChatMessages(options: BuildChatContextOptions): ChatMessage[] {
-	const { priorMessages, triggerMessage, botUserId, authorUsername, userQuestion } = options;
+	const {
+		priorMessages,
+		triggerMessage,
+		botUserId,
+		authorUsername,
+		userQuestion,
+		systemPrompt = MENTION_SYSTEM_PROMPT,
+	} = options;
 
 	const transcriptLines: string[] = [];
 	for (const message of priorMessages) {
@@ -73,7 +100,7 @@ export function buildMentionChatMessages(options: BuildChatContextOptions): Chat
 		:	"";
 
 	return [
-		{ role: "system", content: MENTION_SYSTEM_PROMPT },
+		{ role: "system", content: systemPrompt },
 		{
 			role: "user",
 			content: `${recentBlock}${replyHint}\n\n${authorUsername} asked:\n${question}`,
