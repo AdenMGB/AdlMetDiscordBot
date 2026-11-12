@@ -84,19 +84,29 @@ Set `NVIDIA_API_KEY` in `.dev.vars` locally and `pnpm wrangler secret put NVIDIA
 
 ### @Metro Mate mention chat (NVIDIA)
 
-Slash commands use the **Interactions** endpoint; ordinary channel messages (including **@mentions**) need a small **Gateway relay** that forwards mentions to the Worker.
+Slash commands use the **Interactions** endpoint; ordinary channel messages (including **@mentions** and **replies** to Metro Mate) need an always-on **Discord AI runner** on Ubuntu (recommended) or the legacy **Gateway relay → Worker** path.
+
+**Recommended — Ubuntu Discord AI runner** (streams NVIDIA straight to Discord; richer context):
 
 1. Developer Portal → **Bot** → enable **Message Content Intent** (privileged).
-2. Optional secret: `pnpm wrangler secret put GATEWAY_RELAY_SECRET` (or reuse `SETUP_SECRET`).
-3. On a always-on host (same Ubuntu box as alerts cron is fine):
+2. On your Ubuntu host:
 
 ```bash
-cp .gateway-relay.env.example .gateway-relay.env   # DISCORD_BOT_TOKEN, SETUP_SECRET, API_BASE
+cp apps/discord-ai-runner/.env.example apps/discord-ai-runner/.env
+# DISCORD_BOT_TOKEN, NVIDIA_API_KEY
 pnpm install
-pnpm run gateway-relay
+chmod +x apps/discord-ai-runner/scripts/install-ubuntu.sh
+./apps/discord-ai-runner/scripts/install-ubuntu.sh
 ```
 
-When someone @mentions Metro Mate, the Worker fetches the **last 5 messages** in channel, calls NVIDIA, posts a short “thinking…” reply, then **edits** it to the answer (no stuck interaction deferrals).
+See `apps/discord-ai-runner/README.md`. Dev without systemd: `pnpm discord-ai-runner:dev`.
+
+**Legacy relay** (forwards mentions to the Worker):
+
+```bash
+cp .gateway-relay.env.example .gateway-relay.env
+pnpm run gateway-relay
+```
 
 Local smoke test:
 

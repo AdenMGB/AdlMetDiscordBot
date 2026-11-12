@@ -1,20 +1,19 @@
 import {
+	buildMentionChatMessages,
+	MENTION_THINKING_TEXT,
+	nvidiaChatCompletion,
+	stripBotMention,
+	truncateDiscordContent,
+	type DiscordChannelMessage,
+} from "@metro-mate/chat-core";
+import {
 	editChannelMessage,
 	fetchChannelMessages,
 	postChannelReply,
-	type DiscordChannelMessage,
 } from "./discord-api";
 import type { WorkerEnv } from "./env.d";
-import { nvidiaChatCompletion, type ChatMessage } from "./nvidia-chat";
 
-export const MENTION_THINKING_TEXT = "_Metro Mate is thinking…_";
-
-const MENTION_SYSTEM_PROMPT = [
-	"You are Metro Mate, the Adelaide Public Transport Discord assistant.",
-	"Answer questions about Adelaide Metro trains, trams, buses, stations, and service info.",
-	"Use the recent channel context when it helps; do not invent timetables or live delays.",
-	"If unsure, say what you are unsure about. English only. Under 1800 characters.",
-].join(" ");
+export { MENTION_THINKING_TEXT, stripBotMention, truncateDiscordContent };
 
 export type MentionChatEvent = {
 	channel_id: string;
@@ -24,45 +23,11 @@ export type MentionChatEvent = {
 	author_username: string;
 	content: string;
 	bot_user_id: string;
+	/** Serialized reply target from the gateway relay / runner when available */
+	referenced_message?: DiscordChannelMessage | null;
 };
 
-export function stripBotMention(content: string, botUserId: string): string {
-	return content.replace(new RegExp(`<@!?${botUserId}>`, "g"), "").trim();
-}
-
-export function buildMentionChatMessages(
-	priorMessages: DiscordChannelMessage[],
-	authorUsername: string,
-	userQuestion: string,
-): ChatMessage[] {
-	const lines = priorMessages
-		.filter((m) => m.content.trim().length > 0)
-		.map((m) => {
-			const who = m.author.bot ? "Metro Mate" : m.author.username;
-			return `${who}: ${m.content.trim().slice(0, 600)}`;
-		});
-
-	const context =
-		lines.length > 0 ?
-			`Recent messages in this channel (oldest first):\n${lines.join("\n")}`
-		:	"(No prior channel context.)";
-
-	const question = userQuestion.trim() || "(No text after the mention.)";
-
-	return [
-		{ role: "system", content: MENTION_SYSTEM_PROMPT },
-		{
-			role: "user",
-			content: `${context}\n\n${authorUsername} asked:\n${question}`,
-		},
-	];
-}
-
-export function truncateDiscordContent(text: string, max = 2000): string {
-	const trimmed = text.trim();
-	if (trimmed.length <= max) return trimmed;
-	return `${trimmed.slice(0, max - 1)}…`;
-}
+export { buildMentionChatMessages };
 
 export async function processMentionChat(
 	env: WorkerEnv,
@@ -100,14 +65,24 @@ export async function processMentionChat(
 	try {
 		const prior = await fetchChannelMessages(token, event.channel_id, {
 			before: event.message_id,
-			limit: 5,
+			limit: 15,
 		});
 		const chronological = [...prior].reverse();
-		const messages = buildMentionChatMessages(
-			chronological,
-			event.author_username,
-			question,
-		);
+
+		const triggerMessage: DiscordChannelMessage = {
+			id: event.message_id,
+			content: event.content,
+			author: { id: event.author_id, username: event.author_username },
+			referenced_message: event.referenced_message ?? null,
+		};
+
+		const messages = buildMentionChatMessages({
+			priorMessages: chronological,
+			triggerMessage,
+			botUserId: event.bot_user_id,
+			authorUsername: event.author_username,
+			userQuestion: question,
+		});
 		const answer = await nvidiaChatCompletion(apiKey, messages, {
 			maxTokens: 700,
 			timeoutMs: 50_000,

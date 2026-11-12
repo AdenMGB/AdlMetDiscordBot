@@ -1,0 +1,12 @@
+{
+	"name": "@metro-mate/chat-core",
+	"version": "0.1.0",
+	"private": true,
+	"type": "module",
+	"exports": {
+		".": "./src/index.ts",
+		"./nvidia": "./src/nvidia-chat.ts",
+		"./context": "./src/mention-context.ts",
+		"./discord-text": "./src/discord-text.ts"
+	}
+}
