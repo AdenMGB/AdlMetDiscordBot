@@ -149,8 +149,9 @@ export async function processGatewayMessage(
 		});
 
 		const answer = await nvidiaChatCompletion(config.nvidiaApiKey, chatMessages, {
+			model: config.nvidiaModel,
 			maxTokens: config.nvidiaMaxTokens,
-			timeoutMs: 55_000,
+			timeoutMs: 120_000,
 			onChunk: async (partial: string) => {
 				await editor.push(partial);
 			},

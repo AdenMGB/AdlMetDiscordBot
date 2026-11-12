@@ -1,3 +1,4 @@
+import { NVIDIA_DEFAULT_MODEL } from "@metro-mate/chat-core";
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -30,6 +31,7 @@ export function readConfig() {
 	return {
 		discordBotToken: token,
 		nvidiaApiKey: nvidiaKey,
+		nvidiaModel: (process.env.NVIDIA_MODEL ?? NVIDIA_DEFAULT_MODEL).trim(),
 		contextMessageLimit: Math.min(
 			100,
 			Math.max(5, Number(process.env.CONTEXT_MESSAGE_LIMIT ?? "20") || 20),

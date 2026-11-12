@@ -22,7 +22,7 @@ describe("nvidiaChatCompletion", () => {
 		vi.unstubAllGlobals();
 	});
 
-	it("uses streaming for deepseek-v4.1-flash", async () => {
+	it("uses streaming for the default nemotron model", async () => {
 		const payload = [
 			'data: {"choices":[{"delta":{"content":"The Seaford line runs to Brighton."}}]}',
 			"",
@@ -51,7 +51,7 @@ describe("nvidiaChatCompletion", () => {
 			body: string;
 		};
 		expect(JSON.parse(init.body).stream).toBe(true);
-		expect(JSON.parse(init.body).model).toBe("deepseek-ai/deepseek-v4.1-flash");
+		expect(JSON.parse(init.body).model).toBe("nvidia/nemotron-3.5-lightning-30b-a3b");
 	});
 
 	it("throws on API errors", async () => {

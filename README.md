@@ -80,7 +80,7 @@ curl.exe -X POST "https://api.adlmetbot.adenmgb.com/setup/register-commands" -H 
 | `/disruption` | Everyone | Required **type** (train / bus / tram); optional **line** (train only) |
 | `/fact` | Everyone | Adelaide Metro trivia via NVIDIA DeepSeek (`NVIDIA_API_KEY`; optional `topic`) |
 
-Set `NVIDIA_API_KEY` in `.dev.vars` locally and `pnpm wrangler secret put NVIDIA_API_KEY` in production (from [NVIDIA build](https://build.nvidia.com/)).
+Set `NVIDIA_API_KEY` in `.dev.vars` locally and `pnpm wrangler secret put NVIDIA_API_KEY` in production (from [NVIDIA build](https://build.nvidia.com/)). Default chat model is **`nvidia/nemotron-3.5-lightning-30b-a3b`** (`NVIDIA_MODEL` to override in the runner `.env`).
 
 ### @Metro Mate mention chat (NVIDIA)
 
