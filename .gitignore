@@ -7,3 +7,7 @@ dist/
 /data/rail-gtfs-import.sql
 /data/alerts-cron.log
 .alerts-cron.env
+.gateway-relay.env
+apps/discord-ai-runner/.env
+packages/chat-core/dist/
+apps/discord-ai-runner/dist/

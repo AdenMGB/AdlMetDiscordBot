@@ -26,7 +26,17 @@ describe("mention chat", () => {
 				author: { id: "bot", username: "Metro Mate", bot: true },
 			},
 		];
-		const messages = buildMentionChatMessages(prior, "Aden", "what about buses?");
+		const messages = buildMentionChatMessages({
+			priorMessages: prior,
+			triggerMessage: {
+				id: "3",
+				content: "what about buses?",
+				author: { id: "u1", username: "Aden" },
+			},
+			botUserId: "1569963528171815023",
+			authorUsername: "Aden",
+			userQuestion: "what about buses?",
+		});
 		expect(messages).toHaveLength(2);
 		expect(messages[0].role).toBe("system");
 		expect(messages[1].content).toContain("Aden:");

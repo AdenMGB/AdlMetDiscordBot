@@ -89,6 +89,7 @@ export type DiscordChannelMessage = {
 	id: string;
 	content: string;
 	author: { id: string; username: string; bot?: boolean };
+	referenced_message?: DiscordChannelMessage | null;
 };
 
 export async function fetchChannelMessages(

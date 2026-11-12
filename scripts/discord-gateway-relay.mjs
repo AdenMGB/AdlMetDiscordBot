@@ -69,6 +69,7 @@ async function forwardMention(message) {
 		author_username: message.author.username,
 		content: message.content ?? "",
 		bot_user_id: botUserId,
+		referenced_message: message.referenced_message ?? null,
 	};
 
 	const response = await fetch(`${API_BASE}/discord/mention`, {
