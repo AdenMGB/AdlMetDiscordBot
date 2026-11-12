@@ -2,6 +2,11 @@
 # Installs a systemd --user service that keeps the Discord AI runner online (Ubuntu).
 set -euo pipefail
 
+if [[ -s "${HOME}/.nvm/nvm.sh" ]]; then
+	# shellcheck disable=SC1091
+	source "${HOME}/.nvm/nvm.sh"
+fi
+
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 REPO_ROOT="$(cd "$ROOT/../.." && pwd)"
 SERVICE_NAME="metro-mate-discord-ai"
