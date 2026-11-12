@@ -82,6 +82,11 @@ async function forwardMention(message) {
 
 	if (!response.ok) {
 		const body = await response.text();
+		if (response.status === 401) {
+			throw new Error(
+				"Worker returned 401 Unauthorized — SETUP_SECRET or GATEWAY_RELAY_SECRET in .gateway-relay.env must match the same wrangler secret on production. Run: bash scripts/test-mention-auth.sh",
+			);
+		}
 		throw new Error(`Worker /discord/mention ${response.status}: ${body.slice(0, 200)}`);
 	}
 }
@@ -175,4 +180,5 @@ function connect() {
 }
 
 console.log(`Metro Mate gateway relay → ${API_BASE}/discord/mention`);
+console.log(`Auth secret loaded (${RELAY_SECRET.length} chars from GATEWAY_RELAY_SECRET or SETUP_SECRET)`);
 connect();
