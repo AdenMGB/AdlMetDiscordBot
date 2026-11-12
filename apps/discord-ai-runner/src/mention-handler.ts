@@ -1,5 +1,6 @@
 import {
 	buildMentionChatMessages,
+	defaultMaxTokensForQuestion,
 	MENTION_THINKING_TEXT,
 	nvidiaChatCompletion,
 	stripBotMention,
@@ -149,9 +150,11 @@ export async function processGatewayMessage(
 			systemPrompt: config.systemPrompt,
 		});
 
+		const maxTokens = defaultMaxTokensForQuestion(question, config.nvidiaMaxTokens);
+
 		const answer = await nvidiaChatCompletion(config.nvidiaApiKey, chatMessages, {
 			model: config.nvidiaModel,
-			maxTokens: config.nvidiaMaxTokens,
+			maxTokens,
 			timeoutMs: 120_000,
 			onChunk: async (partial: string) => {
 				await editor.push(partial);

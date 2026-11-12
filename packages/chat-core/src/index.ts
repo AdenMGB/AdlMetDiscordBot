@@ -21,3 +21,8 @@ export {
 	type ChatMessage,
 	type NvidiaStreamCallbacks,
 } from "./nvidia-chat";
+export {
+	defaultMaxTokensForQuestion,
+	replyLengthHint,
+	wantsLongReply,
+} from "./reply-length";
