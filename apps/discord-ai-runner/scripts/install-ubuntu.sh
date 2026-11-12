@@ -2,6 +2,11 @@
 # Installs a systemd --user service that keeps the Discord AI runner online (Ubuntu).
 set -euo pipefail
 
+if [[ -s "${HOME}/.nvm/nvm.sh" ]]; then
+	# shellcheck disable=SC1091
+	source "${HOME}/.nvm/nvm.sh"
+fi
+
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 REPO_ROOT="$(cd "$ROOT/../.." && pwd)"
 SERVICE_NAME="metro-mate-discord-ai"
@@ -12,6 +17,15 @@ LOG_DIR="$ROOT/data"
 LOG_FILE="$LOG_DIR/runner.log"
 
 mkdir -p "$(dirname "$UNIT_PATH")" "$LOG_DIR"
+
+if [[ "$(loginctl show-user "$(whoami)" -p Linger --value 2>/dev/null || echo no)" != "yes" ]]; then
+	if command -v sudo >/dev/null && sudo -n loginctl enable-linger "$(whoami)" 2>/dev/null; then
+		echo "Enabled systemd linger for $(whoami) (service survives SSH logout)."
+	else
+		echo "WARNING: Linger is off — user systemd services stop when you log out."
+		echo "  Run: sudo loginctl enable-linger $(whoami)"
+	fi
+fi
 
 if [[ ! -f "$ENV_FILE" ]]; then
 	cp "$ENV_EXAMPLE" "$ENV_FILE"

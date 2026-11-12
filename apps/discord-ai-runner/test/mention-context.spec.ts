@@ -8,6 +8,16 @@ import { describe, expect, it } from "vitest";
 const BOT = "1569963528171815023";
 
 describe("discord-ai-runner triggers", () => {
+	it("responds when mention is only in content (no mentions array)", () => {
+		const msg: GatewayMessage = {
+			id: "0",
+			channel_id: "c",
+			content: `<@${BOT}> hello`,
+			author: { id: "u", username: "Aden" },
+		};
+		expect(shouldRespondToMessage(msg, BOT)).toBe(true);
+	});
+
 	it("responds to @mention", () => {
 		const msg: GatewayMessage = {
 			id: "1",
