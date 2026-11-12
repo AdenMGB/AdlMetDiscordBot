@@ -109,7 +109,19 @@ export function startDiscordGateway(
 			}
 
 			if (payload.op === 0 && payload.t === "MESSAGE_CREATE") {
-				onMessageCreate(payload.d as GatewayMessage);
+				const message = payload.d as GatewayMessage;
+				if (
+					message?.author &&
+					!message.author.bot &&
+					(message.mentions?.length ||
+						message.content?.includes("<@") ||
+						message.referenced_message)
+				) {
+					console.log(
+						`MESSAGE_CREATE #${message.channel_id} from ${message.author.username}`,
+					);
+				}
+				onMessageCreate(message);
 			}
 		});
 

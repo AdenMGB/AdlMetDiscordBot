@@ -30,11 +30,19 @@ function isReplyToBot(message: GatewayMessage, botUserId: string): boolean {
 	return false;
 }
 
+function contentMentionsBot(content: string | undefined, botUserId: string): boolean {
+	if (!content) return false;
+	return (
+		content.includes(`<@${botUserId}>`) || content.includes(`<@!${botUserId}>`)
+	);
+}
+
 export function shouldRespondToMessage(message: GatewayMessage, botUserId: string): boolean {
 	if (!message?.author || message.author.bot) return false;
 	const mentioned =
-		Array.isArray(message.mentions) &&
-		message.mentions.some((user) => user.id === botUserId);
+		(Array.isArray(message.mentions) &&
+			message.mentions.some((user) => user.id === botUserId)) ||
+		contentMentionsBot(message.content, botUserId);
 	if (mentioned) return true;
 	return isReplyToBot(message, botUserId);
 }

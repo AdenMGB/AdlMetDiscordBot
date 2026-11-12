@@ -13,6 +13,15 @@ LOG_FILE="$LOG_DIR/runner.log"
 
 mkdir -p "$(dirname "$UNIT_PATH")" "$LOG_DIR"
 
+if [[ "$(loginctl show-user "$(whoami)" -p Linger --value 2>/dev/null || echo no)" != "yes" ]]; then
+	if command -v sudo >/dev/null && sudo -n loginctl enable-linger "$(whoami)" 2>/dev/null; then
+		echo "Enabled systemd linger for $(whoami) (service survives SSH logout)."
+	else
+		echo "WARNING: Linger is off — user systemd services stop when you log out."
+		echo "  Run: sudo loginctl enable-linger $(whoami)"
+	fi
+fi
+
 if [[ ! -f "$ENV_FILE" ]]; then
 	cp "$ENV_EXAMPLE" "$ENV_FILE"
 	echo "Created $ENV_FILE — add DISCORD_BOT_TOKEN and NVIDIA_API_KEY."
@@ -25,7 +34,16 @@ echo "Installing workspace dependencies from $REPO_ROOT …"
 )
 
 PNPM_BIN="$(command -v pnpm)"
-NODE_BIN_DIR="$(dirname "$(command -v node)")"
+NODE_BIN="$(command -v node)"
+NODE_BIN_DIR="$(dirname "$NODE_BIN")"
+TSX_BIN="$ROOT/node_modules/.bin/tsx"
+if [[ ! -x "$TSX_BIN" ]]; then
+	TSX_BIN="$(command -v tsx 2>/dev/null || true)"
+fi
+if [[ ! -x "$TSX_BIN" ]]; then
+	echo "tsx not found — run pnpm install in $REPO_ROOT first." >&2
+	exit 1
+fi
 
 cat >"$UNIT_PATH" <<EOF
 [Unit]
@@ -39,7 +57,7 @@ WorkingDirectory=$ROOT
 Environment=NODE_ENV=production
 Environment=PATH=$NODE_BIN_DIR:/usr/bin:/bin
 EnvironmentFile=$ENV_FILE
-ExecStart=$PNPM_BIN --dir $ROOT start
+ExecStart=$NODE_BIN $TSX_BIN src/index.ts
 Restart=on-failure
 RestartSec=5
 StandardOutput=append:$LOG_FILE
