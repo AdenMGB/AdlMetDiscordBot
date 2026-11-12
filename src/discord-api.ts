@@ -85,6 +85,75 @@ export async function registerGuildCommands(
 	}
 }
 
+export type DiscordChannelMessage = {
+	id: string;
+	content: string;
+	author: { id: string; username: string; bot?: boolean };
+};
+
+export async function fetchChannelMessages(
+	token: string,
+	channelId: string,
+	options?: { limit?: number; before?: string },
+): Promise<DiscordChannelMessage[]> {
+	const limit = Math.min(Math.max(options?.limit ?? 5, 1), 100);
+	const params = new URLSearchParams({ limit: String(limit) });
+	if (options?.before) params.set("before", options.before);
+
+	const response = await discordFetch(
+		token,
+		`/channels/${channelId}/messages?${params.toString()}`,
+	);
+	if (!response.ok) {
+		const body = await response.text();
+		throw new Error(`Failed to fetch channel messages (${response.status}): ${body}`);
+	}
+	return (await response.json()) as DiscordChannelMessage[];
+}
+
+export async function editChannelMessage(
+	token: string,
+	channelId: string,
+	messageId: string,
+	data: { content?: string; embeds?: unknown[] },
+): Promise<void> {
+	const response = await discordFetch(token, `/channels/${channelId}/messages/${messageId}`, {
+		method: "PATCH",
+		body: JSON.stringify(data),
+	});
+	if (!response.ok) {
+		const body = await response.text();
+		throw new Error(`Failed to edit channel message (${response.status}): ${body}`);
+	}
+}
+
+export async function postChannelReply(
+	token: string,
+	channelId: string,
+	payload: {
+		content?: string;
+		embeds?: unknown[];
+		replyToMessageId: string;
+		guildId?: string;
+	},
+): Promise<{ id: string }> {
+	const messageReference: Record<string, string | boolean> = {
+		message_id: payload.replyToMessageId,
+		fail_if_not_exists: false,
+	};
+	if (payload.guildId) {
+		messageReference.channel_id = channelId;
+		messageReference.guild_id = payload.guildId;
+	}
+
+	return postChannelMessage(token, channelId, {
+		content: payload.content,
+		embeds: payload.embeds,
+		allowed_mentions: { parse: [] },
+		message_reference: messageReference,
+	});
+}
+
 export async function postChannelMessage(
 	token: string,
 	channelId: string,
@@ -92,15 +161,17 @@ export async function postChannelMessage(
 		content?: string;
 		embeds?: unknown[];
 		components?: unknown[];
+		message_reference?: Record<string, string | boolean>;
 		allowed_mentions?: { parse?: string[]; roles?: string[] };
 		mentionRoleIds?: string[];
 	},
 ): Promise<{ id: string }> {
-	const { mentionRoleIds, ...rest } = payload;
+	const { mentionRoleIds, message_reference, ...rest } = payload;
 	const response = await discordFetch(token, `/channels/${channelId}/messages`, {
 		method: "POST",
 		body: JSON.stringify({
 			...rest,
+			...(message_reference ? { message_reference } : {}),
 			allowed_mentions: rest.allowed_mentions ?? {
 				parse: [],
 				roles: mentionRoleIds ?? [],

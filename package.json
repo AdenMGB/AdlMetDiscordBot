@@ -8,6 +8,7 @@
 		"dev": "wrangler dev",
 		"start": "wrangler dev",
 		"register-commands": "node scripts/register-commands.mjs",
+		"gateway-relay": "node scripts/discord-gateway-relay.mjs",
 		"import-gtfs": "python3 scripts/import-rail-gtfs.py",
 		"import-gtfs:local": "python3 scripts/import-rail-gtfs.py --apply-local",
 		"test": "vitest",
@@ -23,6 +24,7 @@
 	},
 	"dependencies": {
 		"discord-interactions": "^4.4.0",
-		"gtfs-realtime-bindings": "^2.2.0"
+		"gtfs-realtime-bindings": "^2.2.0",
+		"ws": "^8.18.3"
 	}
 }

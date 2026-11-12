@@ -82,6 +82,22 @@ curl.exe -X POST "https://api.adlmetbot.adenmgb.com/setup/register-commands" -H 
 
 Set `NVIDIA_API_KEY` in `.dev.vars` locally and `pnpm wrangler secret put NVIDIA_API_KEY` in production (from [NVIDIA build](https://build.nvidia.com/)).
 
+### @Metro Mate mention chat (NVIDIA)
+
+Slash commands use the **Interactions** endpoint; ordinary channel messages (including **@mentions**) need a small **Gateway relay** that forwards mentions to the Worker.
+
+1. Developer Portal → **Bot** → enable **Message Content Intent** (privileged).
+2. Optional secret: `pnpm wrangler secret put GATEWAY_RELAY_SECRET` (or reuse `SETUP_SECRET`).
+3. On a always-on host (same Ubuntu box as alerts cron is fine):
+
+```bash
+cp .gateway-relay.env.example .gateway-relay.env   # DISCORD_BOT_TOKEN, SETUP_SECRET, API_BASE
+pnpm install
+pnpm run gateway-relay
+```
+
+When someone @mentions Metro Mate, the Worker fetches the **last 5 messages** in channel, calls NVIDIA, posts a short “thinking…” reply, then **edits** it to the answer (no stuck interaction deferrals).
+
 Local smoke test:
 
 ```bash

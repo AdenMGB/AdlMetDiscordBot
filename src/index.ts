@@ -19,6 +19,7 @@ import {
 	postVerifyMessage,
 	registerGuildCommands,
 } from "./discord-api";
+import { type MentionChatEvent, processMentionChat } from "./mention-chat";
 import { pushNewServiceAlerts } from "./transit/service-alerts";
 import type { WorkerEnv } from "./env.d";
 import {
@@ -87,6 +88,12 @@ function requireSetupSecret(request: Request, env: WorkerEnv): boolean {
 function requireAlertsCronSecret(request: Request, env: WorkerEnv): boolean {
 	const secret = request.headers.get("Authorization")?.replace("Bearer ", "");
 	const expected = env.ALERTS_CRON_SECRET || env.SETUP_SECRET;
+	return Boolean(expected && secret === expected);
+}
+
+function requireGatewayRelaySecret(request: Request, env: WorkerEnv): boolean {
+	const secret = request.headers.get("Authorization")?.replace("Bearer ", "");
+	const expected = env.GATEWAY_RELAY_SECRET || env.SETUP_SECRET;
 	return Boolean(expected && secret === expected);
 }
 
@@ -266,6 +273,27 @@ export default {
 				const message = error instanceof Error ? error.message : "Unknown error";
 				return json({ error: message }, 500);
 			}
+		}
+
+		if (request.method === "POST" && url.pathname === "/discord/mention") {
+			if (!requireGatewayRelaySecret(request, env)) {
+				return json({ error: "Unauthorized" }, 401);
+			}
+			let event: MentionChatEvent;
+			try {
+				event = (await request.json()) as MentionChatEvent;
+			} catch {
+				return json({ error: "Invalid JSON body" }, 400);
+			}
+			if (!event.channel_id || !event.message_id || !event.bot_user_id) {
+				return json({ error: "Missing channel_id, message_id, or bot_user_id" }, 400);
+			}
+			ctx.waitUntil(
+				processMentionChat(env, event).catch((error) => {
+					console.error("mention-chat failed:", error);
+				}),
+			);
+			return new Response(null, { status: 204 });
 		}
 
 		if (request.method === "POST" && url.pathname === "/alerts/push") {

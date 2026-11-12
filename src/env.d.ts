@@ -14,5 +14,7 @@ export interface WorkerEnv {
 	ALERTS_CRON_SECRET?: string;
 	/** NVIDIA integrate API for `/fact` (https://integrate.api.nvidia.com/v1). */
 	NVIDIA_API_KEY?: string;
+	/** Bearer token for POST /discord/mention from the gateway relay (falls back to SETUP_SECRET). */
+	GATEWAY_RELAY_SECRET?: string;
 	DB?: D1Database;
 }
