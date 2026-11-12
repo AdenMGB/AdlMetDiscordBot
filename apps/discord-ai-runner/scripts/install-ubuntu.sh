@@ -34,16 +34,7 @@ echo "Installing workspace dependencies from $REPO_ROOT …"
 )
 
 PNPM_BIN="$(command -v pnpm)"
-NODE_BIN="$(command -v node)"
-NODE_BIN_DIR="$(dirname "$NODE_BIN")"
-TSX_BIN="$ROOT/node_modules/.bin/tsx"
-if [[ ! -x "$TSX_BIN" ]]; then
-	TSX_BIN="$(command -v tsx 2>/dev/null || true)"
-fi
-if [[ ! -x "$TSX_BIN" ]]; then
-	echo "tsx not found — run pnpm install in $REPO_ROOT first." >&2
-	exit 1
-fi
+NODE_BIN_DIR="$(dirname "$(command -v node)")"
 
 cat >"$UNIT_PATH" <<EOF
 [Unit]
@@ -57,7 +48,7 @@ WorkingDirectory=$ROOT
 Environment=NODE_ENV=production
 Environment=PATH=$NODE_BIN_DIR:/usr/bin:/bin
 EnvironmentFile=$ENV_FILE
-ExecStart=$NODE_BIN $TSX_BIN src/index.ts
+ExecStart=$PNPM_BIN --dir $ROOT start
 Restart=on-failure
 RestartSec=5
 StandardOutput=append:$LOG_FILE
