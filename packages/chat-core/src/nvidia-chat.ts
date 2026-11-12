@@ -1,9 +1,13 @@
 const NVIDIA_CHAT_URL = "https://integrate.api.nvidia.com/v1/chat/completions";
 
-export const NVIDIA_DEFAULT_MODEL = "deepseek-ai/deepseek-v4.1-flash";
+/** Fast on integrate.api.nvidia.com; deepseek-v4.1-flash often stalls 60s+ from some hosts. */
+export const NVIDIA_DEFAULT_MODEL = "nvidia/nemotron-3.5-lightning-30b-a3b";
 
-/** Non-stream completions to this model often stall 60s+; streaming is reliable. */
-const STREAMING_MODELS = new Set([NVIDIA_DEFAULT_MODEL]);
+/** Prefer streaming (more reliable than buffered for several hosted models). */
+const STREAMING_MODELS = new Set([
+	NVIDIA_DEFAULT_MODEL,
+	"deepseek-ai/deepseek-v4.1-flash",
+]);
 
 export type ChatMessage = {
 	role: "system" | "user" | "assistant";
@@ -32,11 +36,14 @@ export function parseSseChatChunks(buffer: string): { text: string; rest: string
 		if (!payload || payload === "[DONE]") continue;
 		try {
 			const chunk = JSON.parse(payload) as {
-				choices?: Array<{ delta?: { content?: string | null } }>;
+				choices?: Array<{
+					delta?: { content?: string | null; reasoning_content?: string | null };
+				}>;
 			};
-			const delta = chunk.choices?.[0]?.delta?.content;
-			if (typeof delta === "string") {
-				text += delta;
+			const delta = chunk.choices?.[0]?.delta;
+			const piece = delta?.content ?? delta?.reasoning_content;
+			if (typeof piece === "string") {
+				text += piece;
 			}
 		} catch {
 			// partial JSON line — wait for more bytes
