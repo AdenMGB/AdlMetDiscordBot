@@ -20,6 +20,7 @@ export const MENTION_SYSTEM_PROMPT = [
 	"Answer trains, trams, buses, stations, fares, and getting around when it comes up naturally in the chat.",
 	"Use recent messages and reply quotes when they help. Chat can be off-topic — roll with it unless they want transport info.",
 	"When a **Live command data** block is attached to the user message, treat it as ground truth (same sources as /timetable, /live-trains, /alerts). Summarise it casually — do not dump raw lists unless they asked for detail.",
+	"Only reference slash commands that exist: /timetable, /live-trains, /alerts, /disruption, /fact, /health. Never invent commands (e.g. there is no /arrivals).",
 	"Do not invent live times, delays, or timetables when no live data block was provided.",
 	"If unsure, say what you are unsure about.",
 	"Default: terse — 1–3 short sentences. No preamble or sign-off.",

@@ -2,6 +2,9 @@ import type { D1Database } from "@cloudflare/workers-types";
 import type { LatLon } from "./geography";
 import { displayStationName } from "./format";
 
+/** SQLite/D1 bind limit per statement (~999); keep headroom for large live feeds. */
+const IN_CLAUSE_CHUNK = 200;
+
 export type LiveDbContext = {
 	tripMeta: Map<string, { route_id: string; headsign: string }>;
 	stops: Map<string, LatLon>;
@@ -22,6 +25,21 @@ function toLatLon(row: {
 	};
 }
 
+async function queryIdsInChunks<T>(
+	db: D1Database,
+	ids: string[],
+	sqlForPlaceholders: (placeholders: string) => string,
+): Promise<T[]> {
+	const out: T[] = [];
+	for (let offset = 0; offset < ids.length; offset += IN_CLAUSE_CHUNK) {
+		const chunk = ids.slice(offset, offset + IN_CLAUSE_CHUNK);
+		const placeholders = chunk.map(() => "?").join(",");
+		const { results } = await db.prepare(sqlForPlaceholders(placeholders)).bind(...chunk).all<T>();
+		out.push(...(results ?? []));
+	}
+	return out;
+}
+
 export async function loadLiveDbContext(
 	db: D1Database,
 	tripIds: string[],
@@ -31,39 +49,39 @@ export async function loadLiveDbContext(
 	const stops = new Map<string, LatLon>();
 	const tripPaths = new Map<string, LatLon[]>();
 
-	if (tripIds.length > 0) {
-		const placeholders = tripIds.map(() => "?").join(",");
-		const { results: trips } = await db
-			.prepare(
-				`SELECT trip_id, route_id, headsign FROM rail_trips WHERE trip_id IN (${placeholders})`,
-			)
-			.bind(...tripIds)
-			.all<{ trip_id: string; route_id: string; headsign: string }>();
-		for (const row of trips ?? []) {
+	const uniqueTripIds = [...new Set(tripIds)];
+	if (uniqueTripIds.length > 0) {
+		const trips = await queryIdsInChunks<{
+			trip_id: string;
+			route_id: string;
+			headsign: string;
+		}>(db, uniqueTripIds, (ph) =>
+			`SELECT trip_id, route_id, headsign FROM rail_trips WHERE trip_id IN (${ph})`,
+		);
+		for (const row of trips) {
 			tripMeta.set(row.trip_id, {
 				route_id: row.route_id,
 				headsign: row.headsign,
 			});
 		}
 
-		const { results: pathRows } = await db
-			.prepare(
-				`SELECT ts.trip_id, ts.stop_sequence, s.stop_id, s.name, s.lat, s.lon
+		const pathRows = await queryIdsInChunks<{
+			trip_id: string;
+			stop_sequence: number;
+			stop_id: string;
+			name: string;
+			lat: number;
+			lon: number;
+		}>(
+			db,
+			uniqueTripIds,
+			(ph) => `SELECT ts.trip_id, ts.stop_sequence, s.stop_id, s.name, s.lat, s.lon
          FROM rail_trip_stops ts
          JOIN rail_stops s ON s.stop_id = ts.stop_id
-         WHERE ts.trip_id IN (${placeholders})
+         WHERE ts.trip_id IN (${ph})
          ORDER BY ts.trip_id, ts.stop_sequence`,
-			)
-			.bind(...tripIds)
-			.all<{
-				trip_id: string;
-				stop_sequence: number;
-				stop_id: string;
-				name: string;
-				lat: number;
-				lon: number;
-			}>();
-		for (const row of pathRows ?? []) {
+		);
+		for (const row of pathRows) {
 			const list = tripPaths.get(row.trip_id) ?? [];
 			list.push(toLatLon(row));
 			tripPaths.set(row.trip_id, list);
@@ -72,14 +90,17 @@ export async function loadLiveDbContext(
 
 	const uniqueStops = [...new Set(stopIds)];
 	if (uniqueStops.length > 0) {
-		const placeholders = uniqueStops.map(() => "?").join(",");
-		const { results } = await db
-			.prepare(
-				`SELECT stop_id, name, lat, lon FROM rail_stops WHERE stop_id IN (${placeholders})`,
-			)
-			.bind(...uniqueStops)
-			.all<{ stop_id: string; name: string; lat: number; lon: number }>();
-		for (const row of results ?? []) {
+		const results = await queryIdsInChunks<{
+			stop_id: string;
+			name: string;
+			lat: number;
+			lon: number;
+		}>(
+			db,
+			uniqueStops,
+			(ph) => `SELECT stop_id, name, lat, lon FROM rail_stops WHERE stop_id IN (${ph})`,
+		);
+		for (const row of results) {
 			stops.set(row.stop_id, toLatLon(row));
 		}
 	}

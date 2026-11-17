@@ -150,7 +150,10 @@ async function runLiveTool(
 		return formatLiveBlock(trains, lineFilter);
 	} catch (error) {
 		const msg = error instanceof Error ? error.message : "fetch failed";
-		return `Live trains\nCould not load GTFS-RT: ${msg}`;
+		const short = /too many SQL variables/i.test(msg)
+			? "live-train database query failed (too many active trips — fix deploying)"
+			: msg;
+		return `Live trains\nCould not load: ${short}`;
 	}
 }
 
