@@ -5,6 +5,8 @@ export interface WorkerEnv {
 	DISCORD_PUBLIC_KEY: string;
 	DISCORD_BOT_TOKEN: string;
 	GUILD_ID: string;
+	/** Comma-separated Discord server IDs that also get slash commands (optional). */
+	COMMAND_GUILD_IDS?: string;
 	VERIFIED_ROLE_ID: string;
 	VERIFY_CHANNEL_ID: string;
 	ALERTS_CHANNEL_ID: string;

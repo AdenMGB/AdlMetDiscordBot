@@ -151,6 +151,8 @@ function loadConfig() {
 	return {
 		DISCORD_BOT_TOKEN: fromFile.DISCORD_BOT_TOKEN ?? process.env.DISCORD_BOT_TOKEN,
 		GUILD_ID: fromFile.GUILD_ID ?? process.env.GUILD_ID,
+		COMMAND_GUILD_IDS:
+			fromFile.COMMAND_GUILD_IDS ?? process.env.COMMAND_GUILD_IDS ?? "1533757414564696184",
 		DISCORD_APPLICATION_ID:
 			fromFile.DISCORD_APPLICATION_ID ??
 			process.env.DISCORD_APPLICATION_ID ??
@@ -158,17 +160,36 @@ function loadConfig() {
 	};
 }
 
-const { DISCORD_BOT_TOKEN: token, GUILD_ID: guildId, DISCORD_APPLICATION_ID: applicationId } =
-	loadConfig();
+function commandGuildIds(config) {
+	const seen = new Set();
+	const ids = [];
+	const add = (id) => {
+		const trimmed = id?.trim();
+		if (!trimmed || seen.has(trimmed)) {
+			return;
+		}
+		seen.add(trimmed);
+		ids.push(trimmed);
+	};
+	add(config.GUILD_ID);
+	for (const part of (config.COMMAND_GUILD_IDS ?? "").split(",")) {
+		add(part);
+	}
+	return ids;
+}
 
-if (!token || !guildId) {
+const config = loadConfig();
+const { DISCORD_BOT_TOKEN: token, DISCORD_APPLICATION_ID: applicationId } = config;
+const guildIds = commandGuildIds(config);
+
+if (!token || guildIds.length === 0) {
 	console.error(`
 Missing credentials for command registration.
 
 Create .dev.vars (gitignored) from .dev.vars.example, or set environment variables:
 
   DISCORD_BOT_TOKEN
-  GUILD_ID
+  GUILD_ID (and/or COMMAND_GUILD_IDS)
 
 PowerShell example:
   Copy-Item .dev.vars.example .dev.vars
@@ -178,22 +199,27 @@ PowerShell example:
 	process.exit(1);
 }
 
-const response = await fetch(
-	`https://discord.com/api/v10/applications/${applicationId}/guilds/${guildId}/commands`,
-	{
-		method: "PUT",
-		headers: {
-			Authorization: `Bot ${token}`,
-			"Content-Type": "application/json",
+for (const guildId of guildIds) {
+	const response = await fetch(
+		`https://discord.com/api/v10/applications/${applicationId}/guilds/${guildId}/commands`,
+		{
+			method: "PUT",
+			headers: {
+				Authorization: `Bot ${token}`,
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(COMMANDS),
 		},
-		body: JSON.stringify(COMMANDS),
-	},
-);
+	);
 
-if (!response.ok) {
-	console.error(await response.text());
-	process.exit(1);
+	if (!response.ok) {
+		console.error(`Guild ${guildId}:`, await response.text());
+		process.exit(1);
+	}
+
+	const registered = await response.json();
+	console.log(
+		`Guild ${guildId} — registered:`,
+		registered.map((c) => c.name).join(", "),
+	);
 }
-
-const registered = await response.json();
-console.log("Registered guild commands:", registered.map((c) => c.name).join(", "));

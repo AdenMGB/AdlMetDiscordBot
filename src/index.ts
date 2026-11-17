@@ -30,6 +30,7 @@ import {
 	handleTimetableAutocompleteAsync,
 	handleTimetableCommand,
 } from "./timetable-command";
+import { commandRegistrationGuildIds } from "./guilds";
 
 type InteractionOption = {
 	name: string;
@@ -288,12 +289,16 @@ export default {
 			if (!event.channel_id || !event.message_id || !event.bot_user_id) {
 				return json({ error: "Missing channel_id, message_id, or bot_user_id" }, 400);
 			}
-			ctx.waitUntil(
-				processMentionChat(env, event).catch((error) => {
-					console.error("mention-chat failed:", error);
-				}),
-			);
-			return new Response(null, { status: 204 });
+			// Relay awaits this HTTP call — finish AI + Discord edits before 204.
+			// ctx.waitUntil() was cancelled mid-NVIDIA on the free/paid worker wall clock.
+			try {
+				await processMentionChat(env, event);
+				return new Response(null, { status: 204 });
+			} catch (error) {
+				const message = error instanceof Error ? error.message : "mention-chat failed";
+				console.error("mention-chat:", message);
+				return json({ error: message }, 500);
+			}
 		}
 
 		if (request.method === "POST" && url.pathname === "/alerts/push") {
@@ -332,13 +337,24 @@ export default {
 				return json({ error: "Unauthorized" }, 401);
 			}
 			try {
-				await registerGuildCommands(
-					env.DISCORD_BOT_TOKEN,
-					env.DISCORD_APPLICATION_ID,
-					env.GUILD_ID,
-					GUILD_COMMANDS,
-				);
-				return json({ ok: true, commands: GUILD_COMMANDS.map((c) => c.name) });
+				const guildIds = commandRegistrationGuildIds(env);
+				if (guildIds.length === 0) {
+					return json({ error: "No guild IDs configured (GUILD_ID / COMMAND_GUILD_IDS)" }, 500);
+				}
+				const registered: { guildId: string; commands: string[] }[] = [];
+				for (const guildId of guildIds) {
+					await registerGuildCommands(
+						env.DISCORD_BOT_TOKEN,
+						env.DISCORD_APPLICATION_ID,
+						guildId,
+						GUILD_COMMANDS,
+					);
+					registered.push({
+						guildId,
+						commands: GUILD_COMMANDS.map((c) => c.name),
+					});
+				}
+				return json({ ok: true, guilds: registered });
 			} catch (error) {
 				const message = error instanceof Error ? error.message : "Unknown error";
 				return json({ error: message }, 500);

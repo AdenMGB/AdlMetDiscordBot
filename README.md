@@ -24,7 +24,8 @@ Set these as **Wrangler secrets** (and in `.dev.vars` for local dev):
 | Secret | What it is |
 |--------|------------|
 | `DISCORD_BOT_TOKEN` | Metro Mate bot token (Developer Portal → Bot → Reset/Copy) |
-| `GUILD_ID` | Adelaide Public Transport server ID (Developer Mode → Copy Server ID) |
+| `GUILD_ID` | Primary server (verify / alerts); Developer Mode → Copy Server ID |
+| `COMMAND_GUILD_IDS` | Optional comma-separated extra servers that get slash commands only (see `wrangler.jsonc`) |
 | `VERIFIED_ROLE_ID` | Role ID to grant on verify (Server Settings → Roles → … → Copy Role ID) |
 | `SETUP_SECRET` | Long random string; protects the one-time embed setup endpoint |
 
@@ -59,7 +60,7 @@ pnpm run deploy
 
 ## Slash commands
 
-Register once (guild-scoped, updates quickly):
+Register once per configured guild (`GUILD_ID` plus any `COMMAND_GUILD_IDS`):
 
 ```powershell
 pnpm run register-commands
@@ -107,6 +108,8 @@ See `apps/discord-ai-runner/README.md`. Dev without systemd: `pnpm discord-ai-ru
 cp .gateway-relay.env.example .gateway-relay.env
 pnpm run gateway-relay
 ```
+
+On the legacy path, the relay keeps the HTTP request open while the Worker posts “thinking…” and edits the reply (do not use `waitUntil` — Cloudflare can cancel it before the model finishes).
 
 Local smoke test:
 
