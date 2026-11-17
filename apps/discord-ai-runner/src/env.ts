@@ -39,6 +39,8 @@ export function readConfig() {
 		nvidiaMaxTokens: Math.min(4096, Math.max(64, Number(process.env.NVIDIA_MAX_TOKENS ?? "400") || 400)),
 		editThrottleMs: Math.min(5000, Math.max(400, Number(process.env.EDIT_THROTTLE_MS ?? "900") || 900)),
 		systemPrompt: resolveChatPersona(process.env.CHAT_PERSONA),
+		apiBase: (process.env.API_BASE ?? "https://api.adlmetbot.adenmgb.com").replace(/\/$/, ""),
+		runnerSecret: (process.env.RUNNER_SECRET ?? process.env.SETUP_SECRET ?? "").trim(),
 	};
 }
 
