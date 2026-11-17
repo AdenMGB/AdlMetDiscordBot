@@ -14,15 +14,9 @@ import {
 import { formatAdelaideTime } from "./transit/format";
 import { splitDepartures } from "./transit/timetable";
 
-export const SLASH_COMMANDS_BLURB = [
-	"Metro Mate slash commands (same data sources as below):",
-	"/timetable line+station — scheduled departures (D1 GTFS)",
-	"/live-trains — live sets, delays, positions (GTFS-RT)",
-	"/alerts — active train, bus & tram service alerts",
-	"/disruption type [line] — disruptions by mode",
-	"/fact [topic] — trivia",
-	"/health — bot status",
-].join("\n");
+/** Shown only to the model — not an instruction to quote slash commands to users. */
+export const INTERNAL_TOOLS_PREAMBLE =
+	"You (Metro Mate) already called internal tools below. Answer the user using this text; do not redirect them to slash commands.";
 
 function lineFromQuestion(question: string): RailLineId | null {
 	const q = question.toLowerCase();
@@ -76,8 +70,17 @@ function wantsLive(question: string): boolean {
 
 function wantsTimetable(question: string): boolean {
 	return (
-		/\b(timetable|departure|depart|leaving|next\s+train|when.*train)\b/i.test(question) ||
-		lineFromQuestion(question) !== null
+		/\b(timetable|departure|depart|leaving|next\s+train|when.*train|arrival|from\s+\w+)\b/i.test(
+			question,
+		) ||
+		lineFromQuestion(question) !== null ||
+		isTransportQuestion(question)
+	);
+}
+
+function isTransportQuestion(question: string): boolean {
+	return /\b(train|tram|bus|metro|station|rail|delay|cancel|disruption|commute|adelaide)\b/i.test(
+		question,
 	);
 }
 
@@ -117,7 +120,7 @@ async function runTimetableTool(
 	if (!lineId) return null;
 	const station = await guessStation(db, lineId, question);
 	if (!station) {
-		return `Timetable (${RAIL_LINES[lineId].label})\nNeed a station name — same options as /timetable autocomplete.`;
+		return `Timetable (${RAIL_LINES[lineId].label})\nCould not match a station from their message — ask which stop (e.g. Adelaide, Gawler Central).`;
 	}
 
 	const nowSec = Math.floor(Date.now() / 1000);
@@ -130,7 +133,7 @@ async function runTimetableTool(
 	const fmt = (rows: typeof city) =>
 		rows.map((r) => `  ${formatAdelaideTime(r.depart_at, nowSec)} → ${r.headsign}`).join("\n");
 	return [
-		`Timetable (${RAIL_LINES[lineId].label} @ ${station}) — from /timetable logic`,
+		`Timetable (${RAIL_LINES[lineId].label} @ ${station})`,
 		"Towards City:",
 		fmt(city) || "  (none)",
 		`Towards ${RAIL_LINES[lineId].terminal}:`,
@@ -142,7 +145,6 @@ async function runLiveTool(
 	db: D1Database,
 	question: string,
 ): Promise<string | null> {
-	if (!wantsLive(question)) return null;
 	const lineFilter = lineFromQuestion(question);
 	try {
 		const { vehicles, tripUpdates } = await fetchLiveRailFeeds();
@@ -158,7 +160,7 @@ async function runLiveTool(
 }
 
 async function runAlertsTool(question: string): Promise<string | null> {
-	if (!wantsAlerts(question) && !/\b(bus|tram|train)\b/i.test(question)) return null;
+	if (!wantsAlerts(question) && !isTransportQuestion(question)) return null;
 	try {
 		const all = await fetchServiceAlerts();
 		let filtered = all.filter((a) => a.active);
@@ -166,7 +168,7 @@ async function runAlertsTool(question: string): Promise<string | null> {
 		if (mode) filtered = filterAlertsByMode(filtered, mode);
 		const line = lineFromQuestion(question);
 		if (line) filtered = filterAlertsByLine(filtered, line);
-		return formatAlertsBlock(filtered, "Service alerts (GTFS-RT — /alerts & /disruption)");
+		return formatAlertsBlock(filtered, "Service alerts (GTFS-RT)");
 	} catch (error) {
 		const msg = error instanceof Error ? error.message : "fetch failed";
 		return `Service alerts\nCould not load: ${msg}`;
@@ -178,16 +180,23 @@ export async function buildMentionToolContext(
 	db: D1Database | undefined,
 	question: string,
 ): Promise<string> {
-	const blocks: string[] = [SLASH_COMMANDS_BLURB];
+	const blocks: string[] = [INTERNAL_TOOLS_PREAMBLE];
 
 	if (!db) {
 		blocks.push("(D1 not available — timetable/live DB tools skipped.)");
 	} else {
-		const tasks: Promise<string | null>[] = [
-			runAlertsTool(question),
-		];
-		if (wantsTimetable(question)) tasks.push(runTimetableTool(db, question));
-		if (wantsLive(question)) tasks.push(runLiveTool(db, question));
+		const line = lineFromQuestion(question);
+		const transport = isTransportQuestion(question);
+		const tasks: Promise<string | null>[] = [];
+		if (transport || wantsAlerts(question) || line) {
+			tasks.push(runAlertsTool(question));
+		}
+		if (wantsTimetable(question) || line) {
+			tasks.push(runTimetableTool(db, question));
+		}
+		if (wantsLive(question) || line || transport) {
+			tasks.push(runLiveTool(db, question));
+		}
 		const results = await Promise.all(tasks);
 		for (const block of results) {
 			if (block) blocks.push(block);
@@ -195,9 +204,7 @@ export async function buildMentionToolContext(
 	}
 
 	if (blocks.length === 1) {
-		blocks.push(
-			"(No live tool block matched this message — answer from general knowledge or ask a follow-up with line/station.)",
-		);
+		blocks.push("(No transport tools matched — general chat OK.)");
 	}
 
 	return blocks.join("\n\n");
