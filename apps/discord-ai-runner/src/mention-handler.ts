@@ -13,6 +13,7 @@ import {
 	postChannelReply,
 } from "./discord-rest";
 import type { RunnerConfig } from "./env";
+import { fetchMentionToolContext } from "./worker-tools";
 
 export type GatewayMessage = {
 	id: string;
@@ -141,6 +142,8 @@ export async function processGatewayMessage(
 			referenced_message: message.referenced_message ?? null,
 		};
 
+		const commandData = await fetchMentionToolContext(config, question);
+
 		const chatMessages = buildMentionChatMessages({
 			priorMessages: chronological,
 			triggerMessage,
@@ -148,6 +151,7 @@ export async function processGatewayMessage(
 			authorUsername: message.author.username,
 			userQuestion: question,
 			systemPrompt: config.systemPrompt,
+			commandData,
 		});
 
 		const maxTokens = defaultMaxTokensForQuestion(question, config.nvidiaMaxTokens);
