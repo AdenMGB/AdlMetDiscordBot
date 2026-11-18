@@ -19,6 +19,7 @@ import {
 	postVerifyMessage,
 	registerGuildCommands,
 } from "./discord-api";
+import { buildMentionToolContext } from "./mention-tool-context";
 import { type MentionChatEvent, processMentionChat } from "./mention-chat";
 import { pushNewServiceAlerts } from "./transit/service-alerts";
 import type { WorkerEnv } from "./env.d";
@@ -270,6 +271,29 @@ export default {
 					messageId: message.id,
 					channelId: env.VERIFY_CHANNEL_ID,
 				});
+			} catch (error) {
+				const message = error instanceof Error ? error.message : "Unknown error";
+				return json({ error: message }, 500);
+			}
+		}
+
+		if (request.method === "POST" && url.pathname === "/internal/mention-tools") {
+			if (!requireGatewayRelaySecret(request, env)) {
+				return json({ error: "Unauthorized" }, 401);
+			}
+			let body: { question?: string };
+			try {
+				body = (await request.json()) as { question?: string };
+			} catch {
+				return json({ error: "Invalid JSON body" }, 400);
+			}
+			const question = String(body.question ?? "").trim();
+			if (!question) {
+				return json({ error: "Missing question" }, 400);
+			}
+			try {
+				const context = await buildMentionToolContext(env.DB, question);
+				return json({ ok: true, context });
 			} catch (error) {
 				const message = error instanceof Error ? error.message : "Unknown error";
 				return json({ error: message }, 500);

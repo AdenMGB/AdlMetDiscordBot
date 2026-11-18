@@ -1,3 +1,4 @@
+import { buildMentionToolContext } from "./mention-tool-context";
 import {
 	buildMentionChatMessages,
 	defaultMaxTokensForQuestion,
@@ -77,12 +78,15 @@ export async function processMentionChat(
 			referenced_message: event.referenced_message ?? null,
 		};
 
+		const commandData = await buildMentionToolContext(env.DB, question);
+
 		const messages = buildMentionChatMessages({
 			priorMessages: chronological,
 			triggerMessage,
 			botUserId: event.bot_user_id,
 			authorUsername: event.author_username,
 			userQuestion: question,
+			commandData,
 		});
 		const answer = await nvidiaChatCompletion(apiKey, messages, {
 			maxTokens: defaultMaxTokensForQuestion(question, 400),
