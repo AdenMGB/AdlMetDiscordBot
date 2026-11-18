@@ -10,3 +10,7 @@ ALERTS_CHANNEL_ID=1570043584474779699
 DISRUPTIONS_ROLE_ID=1570044646372024443
 NVIDIA_API_KEY=
 GATEWAY_RELAY_SECRET=
+# Edge collector syncs SQLite → Worker (Bearer = GATEWAY_RELAY_SECRET)
+# Optional: Worker reads live edge (default is D1 after sync)
+# RAIL_STORE_URL=https://adlmetfleet.adenmgb.com
+# FLEET_SYNC_URL=https://api.adlmetbot.adenmgb.com (Ubuntu apps/rail-fleet-store/.env)

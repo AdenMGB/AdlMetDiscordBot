@@ -18,5 +18,9 @@ export interface WorkerEnv {
 	NVIDIA_API_KEY?: string;
 	/** Bearer token for POST /discord/mention from the gateway relay (falls back to SETUP_SECRET). */
 	GATEWAY_RELAY_SECRET?: string;
+	/** Edge fleet HTTP (e.g. https://adlmetfleet.adenmgb.com). */
+	RAIL_STORE_URL?: string;
+	/** Bearer token for the fleet store API. */
+	RAIL_STORE_SECRET?: string;
 	DB?: D1Database;
 }

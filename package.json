@@ -10,8 +10,13 @@
 		"register-commands": "node scripts/register-commands.mjs",
 		"gateway-relay": "node scripts/discord-gateway-relay.mjs",
 		"discord-ai-runner:dev": "pnpm --filter @metro-mate/discord-ai-runner dev",
+		"rail-fleet-store:dev": "pnpm --filter @metro-mate/rail-fleet-store dev",
+		"pm2:install": "bash scripts/install-pm2-ubuntu.sh",
 		"discord-ai-runner:build": "pnpm --filter @metro-mate/discord-ai-runner build",
 		"import-gtfs": "python3 scripts/import-rail-gtfs.py",
+		"build:line-tracks": "python scripts/build-rail-line-tracks.py",
+		"import:sabu-fleet": "pnpm --filter @metro-mate/rail-fleet-store import:sabu-fleet",
+		"import:sabu-json": "pnpm --filter @metro-mate/rail-fleet-store import:sabu-json",
 		"import-gtfs:local": "python3 scripts/import-rail-gtfs.py --apply-local",
 		"test": "vitest",
 		"cf-typegen": "wrangler types"
@@ -26,6 +31,7 @@
 	},
 	"dependencies": {
 		"@metro-mate/chat-core": "workspace:*",
+		"@metro-mate/rail-fleet-core": "workspace:*",
 		"discord-interactions": "^4.4.0",
 		"gtfs-realtime-bindings": "^2.2.0",
 		"ws": "^8.18.3"

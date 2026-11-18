@@ -102,7 +102,7 @@ function formatAlertsBlock(alerts: ServiceAlert[], heading: string): string {
 
 function formatLiveBlock(trains: ResolvedLiveTrain[], lineFilter: RailLineId | null): string {
 	if (trains.length === 0) {
-		return "Live trains (GTFS-RT)\nNo live rail vehicles matched the filters.";
+		return "Live trains\nNo live trains matched what they asked for.";
 	}
 	const scope = lineFilter ? RAIL_LINES[lineFilter].label : "all lines";
 	const lines = trains.slice(0, 10).map(
@@ -127,7 +127,7 @@ async function runTimetableTool(
 	const count = clampCount(6);
 	const departures = await fetchUpcomingDepartures(db, lineId, station, nowSec, 120);
 	if (departures.length === 0) {
-		return `Timetable (${RAIL_LINES[lineId].label} @ ${station})\nNo upcoming departures in cached GTFS.`;
+		return `Timetable (${RAIL_LINES[lineId].label} @ ${station})\nNo upcoming departures in the timetable cache.`;
 	}
 	const { city, outbound } = splitDepartures(departures, count, nowSec);
 	const fmt = (rows: typeof city) =>
@@ -168,7 +168,7 @@ async function runAlertsTool(question: string): Promise<string | null> {
 		if (mode) filtered = filterAlertsByMode(filtered, mode);
 		const line = lineFromQuestion(question);
 		if (line) filtered = filterAlertsByLine(filtered, line);
-		return formatAlertsBlock(filtered, "Service alerts (GTFS-RT)");
+		return formatAlertsBlock(filtered, "Service alerts");
 	} catch (error) {
 		const msg = error instanceof Error ? error.message : "fetch failed";
 		return `Service alerts\nCould not load: ${msg}`;
@@ -183,7 +183,7 @@ export async function buildMentionToolContext(
 	const blocks: string[] = [INTERNAL_TOOLS_PREAMBLE];
 
 	if (!db) {
-		blocks.push("(D1 not available — timetable/live DB tools skipped.)");
+		blocks.push("(Timetable database not available — skipped.)");
 	} else {
 		const line = lineFromQuestion(question);
 		const transport = isTransportQuestion(question);

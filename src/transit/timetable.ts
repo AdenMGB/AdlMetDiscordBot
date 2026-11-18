@@ -75,8 +75,8 @@ export function buildTimetableEmbed(
 		fields,
 		footer: {
 			text: feedUpdated
-				? `Adelaide Metro GTFS • updated ${feedUpdated}`
-				: "Adelaide Metro GTFS • scheduled times only",
+				? `Adelaide Metro timetables · updated ${feedUpdated}`
+				: "Adelaide Metro timetables · scheduled times",
 		},
 		timestamp: new Date(nowSec * 1000).toISOString(),
 	};

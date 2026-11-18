@@ -1,0 +1,11 @@
+{
+	"name": "@metro-mate/rail-fleet-core",
+	"version": "0.1.0",
+	"private": true,
+	"type": "module",
+	"exports": {
+		".": "./src/index.ts",
+		"./map-svg": "./src/map-svg.ts",
+		"./rail-line-tracks": "./src/rail-line-tracks.ts"
+	}
+}

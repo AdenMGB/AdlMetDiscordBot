@@ -72,7 +72,7 @@ const COMMANDS = [
 	},
 	{
 		name: "alerts",
-		description: "Train, bus & tram service alerts from Adelaide Metro (GTFS-RT)",
+		description: "Train, bus & tram service alerts from Adelaide Metro",
 		type: 1,
 		options: [
 			{
@@ -86,7 +86,7 @@ const COMMANDS = [
 	},
 	{
 		name: "disruption",
-		description: "Disruptions for train, bus, or tram (GTFS-RT)",
+		description: "Disruptions for train, bus, or tram",
 		type: 1,
 		options: [
 			{
@@ -121,6 +121,76 @@ const COMMANDS = [
 				required: false,
 			},
 		],
+	},
+	{
+		name: "train-map",
+		description: "Map of trains running right now (all, one line, or one set)",
+		type: 1,
+		options: [
+			{
+				name: "line",
+				description: "Rail line (optional)",
+				type: 3,
+				required: false,
+				autocomplete: true,
+			},
+			{
+				name: "set",
+				description: "One train set (optional)",
+				type: 3,
+				required: false,
+				autocomplete: true,
+			},
+		],
+	},
+	{
+		name: "fleet",
+		description: "List train sets and what line they’re on (filters like SA Bus Tracker)",
+		type: 1,
+		options: [
+			{
+				name: "vehicle",
+				description: "Filter by set number (e.g. 4005)",
+				type: 3,
+				required: false,
+			},
+			{
+				name: "line",
+				description: "Filter by line",
+				type: 3,
+				required: false,
+				autocomplete: true,
+			},
+			{ name: "active_now", description: "Only in service now", type: 5, required: false },
+			{ name: "active_today", description: "Only seen today", type: 5, required: false },
+			{
+				name: "page",
+				description: "Page (20 per page)",
+				type: 4,
+				required: false,
+				min_value: 1,
+				max_value: 50,
+			},
+		],
+	},
+	{
+		name: "set-profile",
+		description: "Stored profile & trip history for one train set",
+		type: 1,
+		options: [
+			{
+				name: "set",
+				description: "Train set (e.g. 4005)",
+				type: 3,
+				required: true,
+				autocomplete: true,
+			},
+		],
+	},
+	{
+		name: "rail-stats",
+		description: "How many trains we’re tracking and activity stats",
+		type: 1,
 	},
 ];
 

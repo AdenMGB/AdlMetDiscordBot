@@ -103,7 +103,7 @@ export function handleLiveTrainsCommand(
 		return json({
 			type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
 			data: {
-				content: "Live trains need the D1 binding (static trip paths).",
+				content: "Live trains aren’t set up on this bot yet.",
 				flags: InteractionResponseFlags.EPHEMERAL,
 			},
 		});
@@ -162,9 +162,9 @@ export function handleLiveTrainsCommand(
 					);
 				await editInteractionResponse(applicationId, token, { embeds: [embed] });
 			} catch (error) {
-				const message = error instanceof Error ? error.message : "GTFS-RT fetch failed";
+				const message = error instanceof Error ? error.message : "Couldn’t reach the live feed";
 				await editInteractionResponse(applicationId, token, {
-					content: `Could not load live trains: ${message}`,
+					content: `Couldn’t load live trains: ${message}`,
 				});
 			}
 		})(),

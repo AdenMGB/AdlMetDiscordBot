@@ -167,7 +167,7 @@ export async function buildExpandedSetEmbed(
 	if (!vehicle) {
 		return {
 			title: `Set ${setFilter}`,
-			description: `No live GTFS-RT position for set **${setFilter}** right now.`,
+			description: `No live position for set **${setFilter}** right now.`,
 			color: 0x007dc3,
 		};
 	}
@@ -216,7 +216,7 @@ export async function buildExpandedSetEmbed(
 		fields: [
 			{
 				name: "Route progress",
-				value: history || "_No stop list in static GTFS for this trip._",
+				value: history || "_No stop list on file for this trip._",
 			},
 			{
 				name: "Trip",
@@ -228,6 +228,6 @@ export async function buildExpandedSetEmbed(
 			},
 		],
 		timestamp: new Date(fetchedAtSec * 1000).toISOString(),
-		footer: { text: "GTFS-RT + static route · run again to refresh" },
+		footer: { text: "Live + timetable data · run again to refresh" },
 	};
 }

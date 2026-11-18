@@ -210,6 +210,35 @@ export async function editInteractionResponse(
 	}
 }
 
+export async function editInteractionResponseMultipart(
+	applicationId: string,
+	interactionToken: string,
+	data: {
+		content?: string;
+		embeds?: unknown[];
+		flags?: number;
+	},
+	files: { name: string; data: string | Uint8Array; contentType: string }[],
+): Promise<void> {
+	const form = new FormData();
+	form.append("payload_json", JSON.stringify(data));
+	files.forEach((file, index) => {
+		form.append(
+			`files[${index}]`,
+			new Blob([file.data as BlobPart], { type: file.contentType }),
+			file.name,
+		);
+	});
+	const response = await fetch(
+		`${DISCORD_API}/webhooks/${applicationId}/${interactionToken}/messages/@original`,
+		{ method: "PATCH", body: form },
+	);
+	if (!response.ok) {
+		const body = await response.text();
+		throw new Error(`Failed to edit interaction files (${response.status}): ${body}`);
+	}
+}
+
 export async function fetchBotIdentity(
 	token: string,
 ): Promise<{ id: string; username: string }> {

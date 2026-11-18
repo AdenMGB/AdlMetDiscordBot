@@ -1,0 +1,593 @@
+{
+  "scrapedAt": "2026-11-18T23:44:42.637Z",
+  "rows": [
+    {
+      "setId": "3009",
+      "chassis": "Comeng/Clyde",
+      "bodyClass": "3000 Class",
+      "lastSeenRaw": "17-11-2026 20:11:50",
+      "statusText": "Not in Service"
+    },
+    {
+      "setId": "3010",
+      "chassis": "Comeng/Clyde",
+      "bodyClass": "3000 Class",
+      "lastSeenRaw": "19-11-2026 00:24:44",
+      "statusText": "Not in Service"
+    },
+    {
+      "setId": "3011",
+      "chassis": "Comeng/Clyde",
+      "bodyClass": "3000 Class",
+      "lastSeenRaw": "19-11-2026 08:02:15",
+      "statusText": "Not in Service"
+    },
+    {
+      "setId": "3012",
+      "chassis": "Comeng/Clyde",
+      "bodyClass": "3000 Class",
+      "lastSeenRaw": "24-09-2026 18:51:02",
+      "statusText": "Not in Service"
+    },
+    {
+      "setId": "3013",
+      "chassis": "Comeng/Clyde",
+      "bodyClass": "3000 Class",
+      "lastSeenRaw": "18-11-2026 19:17:57",
+      "statusText": "Not in Service"
+    },
+    {
+      "setId": "3014",
+      "chassis": "Comeng/Clyde",
+      "bodyClass": "3000 Class",
+      "lastSeenRaw": "18-11-2026 07:44:54",
+      "statusText": "Not in Service"
+    },
+    {
+      "setId": "3015",
+      "chassis": "Comeng/Clyde",
+      "bodyClass": "3000 Class",
+      "lastSeenRaw": "18-11-2026 23:37:55",
+      "statusText": "Not in Service"
+    },
+    {
+      "setId": "3016",
+      "chassis": "Comeng/Clyde",
+      "bodyClass": "3000 Class",
+      "lastSeenRaw": "19-11-2026 07:25:53",
+      "statusText": "Not in Service"
+    },
+    {
+      "setId": "3017",
+      "chassis": "Comeng/Clyde",
+      "bodyClass": "3000 Class",
+      "lastSeenRaw": "24-10-2026 21:36:56",
+      "statusText": "Not in Service"
+    },
+    {
+      "setId": "3018",
+      "chassis": "Comeng/Clyde",
+      "bodyClass": "3000 Class",
+      "lastSeenRaw": "19-11-2026 08:30:36",
+      "statusText": "Not in Service"
+    },
+    {
+      "setId": "3019",
+      "chassis": "Comeng/Clyde",
+      "bodyClass": "3000 Class",
+      "lastSeenRaw": "19-11-2026 09:35:00",
+      "statusText": "Not in Service"
+    },
+    {
+      "setId": "3020",
+      "chassis": "Comeng/Clyde",
+      "bodyClass": "3000 Class",
+      "lastSeenRaw": "17-11-2026 10:12:22",
+      "statusText": "Not in Service"
+    },
+    {
+      "setId": "3021",
+      "chassis": "Comeng/Clyde",
+      "bodyClass": "3000 Class",
+      "lastSeenRaw": "19-11-2026 07:44:17",
+      "statusText": "Not in Service"
+    },
+    {
+      "setId": "3022",
+      "chassis": "Comeng/Clyde",
+      "bodyClass": "3000 Class",
+      "lastSeenRaw": "19-11-2026 10:13:26",
+      "statusText": "BEL\nBelair\nNext Stop: Torrens Park Railway Station\nView Vehicle Details"
+    },
+    {
+      "setId": "3023",
+      "chassis": "Comeng/Clyde",
+      "bodyClass": "3000 Class",
+      "lastSeenRaw": "19-11-2026 10:11:44",
+      "statusText": "GRNG\nCity\nBetween Trips\nView Vehicle Details"
+    },
+    {
+      "setId": "3024",
+      "chassis": "Comeng/Clyde",
+      "bodyClass": "3000 Class",
+      "lastSeenRaw": "19-11-2026 10:13:30",
+      "statusText": "OUTHA\nOuter Harbor\nNext Stop: Woodville Railway Station\nView Vehicle Details"
+    },
+    {
+      "setId": "3025",
+      "chassis": "Comeng/Clyde",
+      "bodyClass": "3000 Class",
+      "lastSeenRaw": "18-11-2026 19:10:10",
+      "statusText": "Not in Service"
+    },
+    {
+      "setId": "3026",
+      "chassis": "Comeng/Clyde",
+      "bodyClass": "3000 Class",
+      "lastSeenRaw": "19-11-2026 09:34:56",
+      "statusText": "Not in Service"
+    },
+    {
+      "setId": "3027",
+      "chassis": "Comeng/Clyde",
+      "bodyClass": "3000 Class",
+      "lastSeenRaw": "19-11-2026 01:22:21",
+      "statusText": "Not in Service"
+    },
+    {
+      "setId": "3028",
+      "chassis": "Comeng/Clyde",
+      "bodyClass": "3000 Class",
+      "lastSeenRaw": "19-11-2026 08:29:56",
+      "statusText": "Not in Service"
+    },
+    {
+      "setId": "3030",
+      "chassis": "Comeng/Clyde",
+      "bodyClass": "3000 Class",
+      "lastSeenRaw": "18-11-2026 19:37:02",
+      "statusText": "Not in Service"
+    },
+    {
+      "setId": "3112",
+      "chassis": "Comeng/Clyde",
+      "bodyClass": "3100 Class",
+      "lastSeenRaw": "05-10-2026 16:41:29",
+      "statusText": "Not in Service"
+    },
+    {
+      "setId": "3113",
+      "chassis": "Comeng/Clyde",
+      "bodyClass": "3100 Class",
+      "lastSeenRaw": "18-11-2026 23:45:50",
+      "statusText": "Not in Service"
+    },
+    {
+      "setId": "3114",
+      "chassis": "Comeng/Clyde",
+      "bodyClass": "3100 Class",
+      "lastSeenRaw": "19-11-2026 00:34:05",
+      "statusText": "Not in Service"
+    },
+    {
+      "setId": "3115",
+      "chassis": "Comeng/Clyde",
+      "bodyClass": "3100 Class",
+      "lastSeenRaw": "17-11-2026 17:38:59",
+      "statusText": "Not in Service"
+    },
+    {
+      "setId": "3116",
+      "chassis": "Comeng/Clyde",
+      "bodyClass": "3100 Class",
+      "lastSeenRaw": "19-11-2026 08:48:23",
+      "statusText": "Not in Service"
+    },
+    {
+      "setId": "3117",
+      "chassis": "Comeng/Clyde",
+      "bodyClass": "3100 Class",
+      "lastSeenRaw": "18-11-2026 18:09:40",
+      "statusText": "Not in Service"
+    },
+    {
+      "setId": "3118",
+      "chassis": "Comeng/Clyde",
+      "bodyClass": "3100 Class",
+      "lastSeenRaw": "19-11-2026 10:13:27",
+      "statusText": "PTDOCK\nPort Dock\nNext Stop: St Clair Railway Station\nView Vehicle Details"
+    },
+    {
+      "setId": "3119",
+      "chassis": "Comeng/Clyde",
+      "bodyClass": "3100 Class",
+      "lastSeenRaw": "19-11-2026 06:23:10",
+      "statusText": "Not in Service"
+    },
+    {
+      "setId": "3120",
+      "chassis": "Comeng/Clyde",
+      "bodyClass": "3100 Class",
+      "lastSeenRaw": "19-11-2026 10:13:22",
+      "statusText": "OUTHA\nCity\nNext Stop: Outer Harbor Railway Station\nView Vehicle Details"
+    },
+    {
+      "setId": "3121",
+      "chassis": "Comeng/Clyde",
+      "bodyClass": "3100 Class",
+      "lastSeenRaw": "19-11-2026 08:13:46",
+      "statusText": "Not in Service"
+    },
+    {
+      "setId": "3122",
+      "chassis": "Comeng/Clyde",
+      "bodyClass": "3100 Class",
+      "lastSeenRaw": "19-11-2026 10:13:24",
+      "statusText": "OUTHA\nCity\nNext Stop: Alberton Railway Station\nView Vehicle Details"
+    },
+    {
+      "setId": "3123",
+      "chassis": "Comeng/Clyde",
+      "bodyClass": "3100 Class",
+      "lastSeenRaw": "17-11-2026 19:11:55",
+      "statusText": "Not in Service"
+    },
+    {
+      "setId": "3124",
+      "chassis": "Comeng/Clyde",
+      "bodyClass": "3100 Class",
+      "lastSeenRaw": "19-11-2026 07:34:53",
+      "statusText": "Not in Service"
+    },
+    {
+      "setId": "3125",
+      "chassis": "Comeng/Clyde",
+      "bodyClass": "3100 Class",
+      "lastSeenRaw": "18-11-2026 19:01:14",
+      "statusText": "Not in Service"
+    },
+    {
+      "setId": "3126",
+      "chassis": "Comeng/Clyde",
+      "bodyClass": "3100 Class",
+      "lastSeenRaw": "18-11-2026 21:24:10",
+      "statusText": "Not in Service"
+    },
+    {
+      "setId": "3127",
+      "chassis": "Comeng/Clyde",
+      "bodyClass": "3100 Class",
+      "lastSeenRaw": "18-11-2026 14:38:54",
+      "statusText": "Not in Service"
+    },
+    {
+      "setId": "3128",
+      "chassis": "Comeng/Clyde",
+      "bodyClass": "3100 Class",
+      "lastSeenRaw": "18-11-2026 15:36:56",
+      "statusText": "Not in Service"
+    },
+    {
+      "setId": "3129",
+      "chassis": "Comeng/Clyde",
+      "bodyClass": "3100 Class",
+      "lastSeenRaw": "17-11-2026 19:02:34",
+      "statusText": "Not in Service"
+    },
+    {
+      "setId": "3130",
+      "chassis": "Comeng/Clyde",
+      "bodyClass": "3100 Class",
+      "lastSeenRaw": "19-11-2026 10:13:33",
+      "statusText": "BEL\nBelair\nBetween Trips\nView Vehicle Details"
+    },
+    {
+      "setId": "3131",
+      "chassis": "Comeng/Clyde",
+      "bodyClass": "3100 Class",
+      "lastSeenRaw": "17-11-2026 07:27:29",
+      "statusText": "Not in Service"
+    },
+    {
+      "setId": "3132",
+      "chassis": "Comeng/Clyde",
+      "bodyClass": "3100 Class",
+      "lastSeenRaw": "17-11-2026 07:52:34",
+      "statusText": "Not in Service"
+    },
+    {
+      "setId": "3133",
+      "chassis": "Comeng/Clyde",
+      "bodyClass": "3100 Class",
+      "lastSeenRaw": "19-11-2026 08:16:02",
+      "statusText": "Not in Service"
+    },
+    {
+      "setId": "3134",
+      "chassis": "Comeng/Clyde",
+      "bodyClass": "3100 Class",
+      "lastSeenRaw": "19-11-2026 09:04:55",
+      "statusText": "Not in Service"
+    },
+    {
+      "setId": "3135",
+      "chassis": "Comeng/Clyde",
+      "bodyClass": "3100 Class",
+      "lastSeenRaw": "19-11-2026 00:22:13",
+      "statusText": "Not in Service"
+    },
+    {
+      "setId": "3136",
+      "chassis": "Comeng/Clyde",
+      "bodyClass": "3100 Class",
+      "lastSeenRaw": "15-11-2026 22:45:12",
+      "statusText": "Not in Service"
+    },
+    {
+      "setId": "3137",
+      "chassis": "Comeng/Clyde",
+      "bodyClass": "3100 Class",
+      "lastSeenRaw": "18-11-2026 17:04:08",
+      "statusText": "Not in Service"
+    },
+    {
+      "setId": "3138",
+      "chassis": "Comeng/Clyde",
+      "bodyClass": "3100 Class",
+      "lastSeenRaw": "19-11-2026 10:01:55",
+      "statusText": "Not in Service"
+    },
+    {
+      "setId": "3139",
+      "chassis": "Comeng/Clyde",
+      "bodyClass": "3100 Class",
+      "lastSeenRaw": "19-11-2026 09:30:58",
+      "statusText": "Not in Service"
+    },
+    {
+      "setId": "3140",
+      "chassis": "Comeng/Clyde",
+      "bodyClass": "3100 Class",
+      "lastSeenRaw": "19-11-2026 10:13:22",
+      "statusText": "PTDOCK\nCity\nNext Stop: West Croydon Railway Station\nView Vehicle Details"
+    },
+    {
+      "setId": "4001",
+      "chassis": "Bombardier",
+      "bodyClass": "4000 Class A-City",
+      "lastSeenRaw": "17-11-2026 23:49:25",
+      "statusText": "Not in Service"
+    },
+    {
+      "setId": "4002",
+      "chassis": "Bombardier",
+      "bodyClass": "4000 Class A-City",
+      "lastSeenRaw": "19-11-2026 10:14:32",
+      "statusText": "GAWC\nGawler Central\nNext Stop: Islington Railway Station\nView Vehicle Details"
+    },
+    {
+      "setId": "4003",
+      "chassis": "Bombardier",
+      "bodyClass": "4000 Class A-City",
+      "lastSeenRaw": "19-11-2026 08:11:52",
+      "statusText": "Not in Service"
+    },
+    {
+      "setId": "4004",
+      "chassis": "Bombardier",
+      "bodyClass": "4000 Class A-City",
+      "lastSeenRaw": "19-11-2026 10:14:24",
+      "statusText": "SEAFRD\nSeaford\nNext Stop: Lonsdale Railway Station\nView Vehicle Details"
+    },
+    {
+      "setId": "4005",
+      "chassis": "Bombardier",
+      "bodyClass": "4000 Class A-City",
+      "lastSeenRaw": "19-11-2026 07:51:44",
+      "statusText": "Not in Service"
+    },
+    {
+      "setId": "4006",
+      "chassis": "Bombardier",
+      "bodyClass": "4000 Class A-City",
+      "lastSeenRaw": "19-11-2026 10:14:24",
+      "statusText": "GAWC\nCity\nNext Stop: Salisbury Railway Station\nView Vehicle Details"
+    },
+    {
+      "setId": "4007",
+      "chassis": "Bombardier",
+      "bodyClass": "4000 Class A-City",
+      "lastSeenRaw": "19-11-2026 08:04:12",
+      "statusText": "Not in Service"
+    },
+    {
+      "setId": "4008",
+      "chassis": "Bombardier",
+      "bodyClass": "4000 Class A-City",
+      "lastSeenRaw": "19-11-2026 08:28:38",
+      "statusText": "Not in Service"
+    },
+    {
+      "setId": "4009",
+      "chassis": "Bombardier",
+      "bodyClass": "4000 Class A-City",
+      "lastSeenRaw": "15-11-2026 23:47:53",
+      "statusText": "Not in Service"
+    },
+    {
+      "setId": "4010",
+      "chassis": "Bombardier",
+      "bodyClass": "4000 Class A-City",
+      "lastSeenRaw": "19-11-2026 10:14:34",
+      "statusText": "GAW\nGawler\nBetween Trips\nView Vehicle Details"
+    },
+    {
+      "setId": "4011",
+      "chassis": "Bombardier",
+      "bodyClass": "4000 Class A-City",
+      "lastSeenRaw": "19-11-2026 10:08:59",
+      "statusText": "Not in Service"
+    },
+    {
+      "setId": "4012",
+      "chassis": "Bombardier",
+      "bodyClass": "4000 Class A-City",
+      "lastSeenRaw": "19-11-2026 07:28:28",
+      "statusText": "Not in Service"
+    },
+    {
+      "setId": "4013",
+      "chassis": "Bombardier",
+      "bodyClass": "4000 Class A-City",
+      "lastSeenRaw": "19-11-2026 10:14:20",
+      "statusText": "SEAFRD\nCity\nNext Stop: Brighton Railway Station\nView Vehicle Details"
+    },
+    {
+      "setId": "4014",
+      "chassis": "Bombardier",
+      "bodyClass": "4000 Class A-City",
+      "lastSeenRaw": "19-11-2026 10:14:24",
+      "statusText": "GAWC\nGawler Central\nNext Stop: Smithfield Railway Station\nView Vehicle Details"
+    },
+    {
+      "setId": "4015",
+      "chassis": "Bombardier",
+      "bodyClass": "4000 Class A-City",
+      "lastSeenRaw": "19-11-2026 09:43:04",
+      "statusText": "Not in Service"
+    },
+    {
+      "setId": "4016",
+      "chassis": "Bombardier",
+      "bodyClass": "4000 Class A-City",
+      "lastSeenRaw": "19-11-2026 08:18:26",
+      "statusText": "Not in Service"
+    },
+    {
+      "setId": "4017",
+      "chassis": "Bombardier",
+      "bodyClass": "4000 Class A-City",
+      "lastSeenRaw": "19-11-2026 10:14:33",
+      "statusText": "SEAFRD\nSeaford\nNext Stop: Ascot Park Railway Station\nView Vehicle Details"
+    },
+    {
+      "setId": "4018",
+      "chassis": "Bombardier",
+      "bodyClass": "4000 Class A-City",
+      "lastSeenRaw": "19-11-2026 10:14:31",
+      "statusText": "SEAFRD\nSeaford\nBetween Trips\nView Vehicle Details"
+    },
+    {
+      "setId": "4019",
+      "chassis": "Bombardier",
+      "bodyClass": "4000 Class A-City",
+      "lastSeenRaw": "19-11-2026 07:54:07",
+      "statusText": "Not in Service"
+    },
+    {
+      "setId": "4020",
+      "chassis": "Bombardier",
+      "bodyClass": "4000 Class A-City",
+      "lastSeenRaw": "19-11-2026 10:14:16",
+      "statusText": "SEAFRD\nSeaford\nNext Stop: Seaford Meadows Railway Station\nView Vehicle Details"
+    },
+    {
+      "setId": "4021",
+      "chassis": "Bombardier",
+      "bodyClass": "4000 Class A-City",
+      "lastSeenRaw": "19-11-2026 08:34:34",
+      "statusText": "Not in Service"
+    },
+    {
+      "setId": "4022",
+      "chassis": "Bombardier",
+      "bodyClass": "4000 Class A-City",
+      "lastSeenRaw": "19-11-2026 10:08:56",
+      "statusText": "Not in Service"
+    },
+    {
+      "setId": "4023",
+      "chassis": "Bombardier",
+      "bodyClass": "4000 Class A-City",
+      "lastSeenRaw": "19-11-2026 10:14:33",
+      "statusText": "GAWC\nCity\nNext Stop: Gawler Central Railway Station\nView Vehicle Details"
+    },
+    {
+      "setId": "4024",
+      "chassis": "Bombardier",
+      "bodyClass": "4000 Class A-City",
+      "lastSeenRaw": "19-11-2026 10:14:28",
+      "statusText": "SEAFRD\nCity\nNext Stop: Christie Downs Railway Station\nView Vehicle Details"
+    },
+    {
+      "setId": "4025",
+      "chassis": "Bombardier",
+      "bodyClass": "4000 Class A-City",
+      "lastSeenRaw": "18-11-2026 23:50:26",
+      "statusText": "Not in Service"
+    },
+    {
+      "setId": "4026",
+      "chassis": "Bombardier",
+      "bodyClass": "4000 Class A-City",
+      "lastSeenRaw": "19-11-2026 10:14:26",
+      "statusText": "GAW\nGawler\nNext Stop: Parafield Railway Station\nView Vehicle Details"
+    },
+    {
+      "setId": "4027",
+      "chassis": "Bombardier",
+      "bodyClass": "4000 Class A-City",
+      "lastSeenRaw": "19-11-2026 10:14:34",
+      "statusText": "SEAFRD\nSeaford\nNext Stop: Woodlands Park Railway Station\nView Vehicle Details"
+    },
+    {
+      "setId": "4028",
+      "chassis": "Bombardier",
+      "bodyClass": "4000 Class A-City",
+      "lastSeenRaw": "19-11-2026 10:14:28",
+      "statusText": "FLNDRS\nCity\nNext Stop: Woodlands Park Railway Station\nView Vehicle Details"
+    },
+    {
+      "setId": "4029",
+      "chassis": "Bombardier",
+      "bodyClass": "4000 Class A-City",
+      "lastSeenRaw": "19-11-2026 10:14:33",
+      "statusText": "GAW\nCity\nNext Stop: Islington Railway Station\nView Vehicle Details"
+    },
+    {
+      "setId": "4030",
+      "chassis": "Bombardier",
+      "bodyClass": "4000 Class A-City",
+      "lastSeenRaw": "19-11-2026 10:14:31",
+      "statusText": "GAW\nCity\nNext Stop: Gawler Railway Station\nView Vehicle Details"
+    },
+    {
+      "setId": "4031",
+      "chassis": "Bombardier",
+      "bodyClass": "4000 Class A-City",
+      "lastSeenRaw": "17-11-2026 17:52:04",
+      "statusText": "Not in Service"
+    },
+    {
+      "setId": "4032",
+      "chassis": "Bombardier",
+      "bodyClass": "4000 Class A-City",
+      "lastSeenRaw": "19-11-2026 07:38:58",
+      "statusText": "Not in Service"
+    },
+    {
+      "setId": "4033",
+      "chassis": "Bombardier",
+      "bodyClass": "4000 Class A-City",
+      "lastSeenRaw": "18-11-2026 19:20:09",
+      "statusText": "Not in Service"
+    },
+    {
+      "setId": "4034",
+      "chassis": "Bombardier",
+      "bodyClass": "4000 Class A-City",
+      "lastSeenRaw": "19-11-2026 07:45:18",
+      "statusText": "Not in Service"
+    }
+  ]
+}

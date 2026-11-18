@@ -239,13 +239,13 @@ export function resolveTimetableReference(
 	if (referenceSec < dayStart - 86400) {
 		return {
 			ok: false,
-			message: "That **date** is before the cached GTFS window. Re-import or pick a later day.",
+			message: "That **date** is before the timetable we have on file. Try a later day.",
 		};
 	}
 	if (referenceSec > maxSec) {
 		return {
 			ok: false,
-			message: `That **date** is more than **${TIMETABLE_CACHE_DAYS} days** ahead of the cache. Re-run the GTFS import or pick a nearer day.`,
+			message: `That **date** is more than **${TIMETABLE_CACHE_DAYS} days** out — pick something closer.`,
 		};
 	}
 

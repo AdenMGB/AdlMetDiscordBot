@@ -32,6 +32,15 @@ import {
 	handleTimetableCommand,
 } from "./timetable-command";
 import { commandRegistrationGuildIds } from "./guilds";
+import {
+	handleFleetAutocomplete,
+	handleFleetCommands,
+} from "./fleet-command";
+import {
+	handleFleetHttpRequest,
+	handleFleetSyncPost,
+	isFleetHostname,
+} from "./transit/fleet-http";
 
 type InteractionOption = {
 	name: string;
@@ -146,6 +155,15 @@ async function handleSlashCommand(
 		);
 	}
 
+	if (
+		name === "train-map" ||
+		name === "fleet" ||
+		name === "set-profile" ||
+		name === "rail-stats"
+	) {
+		return handleFleetCommands(interaction, env, ctx);
+	}
+
 	if (name === "health") {
 		const checks: string[] = ["Worker: **online**"];
 		try {
@@ -246,6 +264,14 @@ async function handleVerifyButton(
 export default {
 	async fetch(request: Request, env: WorkerEnv, ctx: ExecutionContext): Promise<Response> {
 		const url = new URL(request.url);
+
+		if (isFleetHostname(url.hostname)) {
+			return handleFleetHttpRequest(request, env, url);
+		}
+
+		if (request.method === "POST" && url.pathname === "/sync") {
+			return handleFleetSyncPost(request, env);
+		}
 
 		if (request.method === "GET" && url.pathname === "/health") {
 			return json({
@@ -413,6 +439,13 @@ export default {
 				}
 				if (interaction.data?.name === "timetable") {
 					return handleTimetableAutocompleteAsync(interaction, env.DB);
+				}
+				if (
+					interaction.data?.name === "train-map" ||
+					interaction.data?.name === "fleet" ||
+					interaction.data?.name === "set-profile"
+				) {
+					return handleFleetAutocomplete(interaction, env);
 				}
 				return json({
 					type: InteractionResponseType.APPLICATION_COMMAND_AUTOCOMPLETE_RESULT,

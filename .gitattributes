@@ -1,0 +1,2 @@
+*.sh text eol=lf
+ecosystem.config.cjs text eol=lf

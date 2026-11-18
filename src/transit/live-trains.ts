@@ -239,7 +239,7 @@ export function formatLiveTrainsEmbed(
 		:	"the network";
 		return {
 			title: "Live trains",
-			description: `No live position for ${scope} in GTFS-RT right now.`,
+			description: `No live position for ${scope} right now.`,
 			color: 0x007dc3,
 		};
 	}
@@ -272,11 +272,11 @@ export function formatLiveTrainsEmbed(
 	return {
 		title,
 		description:
-			"Set numbers and positions from **GTFS Realtime**. " +
+			"Set numbers and positions from **live Adelaide Metro data**. " +
 			"🟢 on time · 🟡 delayed · 🚏 at stop · 🚃 between stations",
 		color: 0x007dc3,
 		fields,
 		timestamp: new Date(fetchedAtSec * 1000).toISOString(),
-		footer: { text: "GTFS-RT · run again to refresh" },
+		footer: { text: "Live feed · run again to refresh" },
 	};
 }

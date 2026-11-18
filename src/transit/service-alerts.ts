@@ -315,7 +315,7 @@ const DISCORD_MESSAGE_CONTENT_MAX = 2000;
 /** @deprecated Use `DISCORD_MESSAGE_EMBED_CHAR_MAX` */
 export const DISCORD_EMBED_CHAR_MAX = DISCORD_MESSAGE_EMBED_CHAR_MAX;
 
-const EMBED_FOOTER_TEXT = "Adelaide Metro GTFS-RT service_alerts";
+const EMBED_FOOTER_TEXT = "Adelaide Metro · official service alerts";
 
 type AlertEmbedField = { name: string; value: string };
 
@@ -401,7 +401,7 @@ export function formatAlertDiscordPayload(
 				{
 					title,
 					description:
-						"No active **train, bus, or tram** disruptions in the GTFS-RT feed right now.",
+						"No active **train, bus, or tram** disruptions on the feed right now.",
 					color: 0x007dc3,
 				},
 			],
@@ -478,6 +478,24 @@ export function formatAlertEmbed(
 	};
 }
 
+/** Stable key for D1 dedupe (`posted_alerts.alert_id`). */
+export function serviceAlertDedupeId(alert: ServiceAlert): string {
+	const feedId = alert.id?.trim();
+	if (feedId) return `gtfs:${feedId}`;
+	const routes = [...alert.routeIds].sort().join(",");
+	const raw = `${alert.mode}|${alert.header.trim().toLowerCase()}|${alert.effectLabel}|${alert.causeLabel}|${routes}`;
+	let hash = 0;
+	for (let i = 0; i < raw.length; i++) {
+		hash = (Math.imul(31, hash) + raw.charCodeAt(i)) | 0;
+	}
+	return `fp:${(hash >>> 0).toString(16)}`;
+}
+
+function discordPostRateLimited(error: unknown): boolean {
+	const message = error instanceof Error ? error.message : String(error);
+	return message.includes("429") || message.toLowerCase().includes("rate limit");
+}
+
 export function formatDiscordAlertPost(
 	alert: ServiceAlert,
 	roleId: string,
@@ -534,23 +552,35 @@ export async function pushNewServiceAlerts(
 	let skipped = 0;
 
 	for (const alert of alerts) {
-		const existing = await db
-			.prepare(`SELECT alert_id FROM posted_alerts WHERE alert_id = ? LIMIT 1`)
-			.bind(alert.id)
-			.first<{ alert_id: string }>();
-		if (existing) {
+		const dedupeId = serviceAlertDedupeId(alert);
+		const summary = `[${alert.mode}] ${alert.header.slice(0, 480)}`;
+
+		const claim = await db
+			.prepare(
+				`INSERT INTO posted_alerts (alert_id, posted_at, summary) VALUES (?, ?, ?)
+				ON CONFLICT(alert_id) DO NOTHING`,
+			)
+			.bind(dedupeId, nowSec, summary)
+			.run();
+
+		if (!claim.meta.changes) {
 			skipped += 1;
 			continue;
 		}
 
-		await postMessage(formatDiscordAlertPost(alert, roleId));
-		await db
-			.prepare(
-				`INSERT INTO posted_alerts (alert_id, posted_at, summary) VALUES (?, ?, ?)`,
-			)
-			.bind(alert.id, nowSec, `[${alert.mode}] ${alert.header.slice(0, 480)}`)
-			.run();
-		posted.push(alert.id);
+		try {
+			await postMessage(formatDiscordAlertPost(alert, roleId));
+			posted.push(dedupeId);
+		} catch (error) {
+			await db
+				.prepare(`DELETE FROM posted_alerts WHERE alert_id = ?`)
+				.bind(dedupeId)
+				.run();
+			if (discordPostRateLimited(error)) {
+				break;
+			}
+			throw error;
+		}
 	}
 
 	return { posted, active: alerts.length, skipped };

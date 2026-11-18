@@ -1,0 +1,25 @@
+{
+	"name": "@metro-mate/rail-fleet-store",
+	"version": "0.1.0",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"start": "tsx src/index.ts",
+		"dev": "tsx watch src/index.ts",
+		"import:sabu-fleet": "tsx scripts/import-sabu-fleet.ts",
+		"import:sabu-json": "tsx scripts/import-sabu-json.ts"
+	},
+	"dependencies": {
+		"@metro-mate/rail-fleet-core": "workspace:*",
+		"@resvg/resvg-js": "^2.6.2",
+		"better-sqlite3": "^11.10.0",
+		"gtfs-realtime-bindings": "^2.2.0",
+		"sharp": "^0.34.5"
+	},
+	"devDependencies": {
+		"@types/better-sqlite3": "^7.6.13",
+		"playwright": "^1.56.1",
+		"tsx": "^4.23.0",
+		"typescript": "^5.5.2"
+	}
+}

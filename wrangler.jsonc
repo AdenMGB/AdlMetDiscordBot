@@ -16,8 +16,10 @@
 		"VERIFY_CHANNEL_ID": "1569953806291308615",
 		"ALERTS_CHANNEL_ID": "1570043584474779699",
 		"DISRUPTIONS_ROLE_ID": "1570044646372024443",
-		"COMMAND_GUILD_IDS": "1533757414564696184"
+		"COMMAND_GUILD_IDS": "1533757414564696184",
+		"RAIL_STORE_URL": "https://adlmetfleet.adenmgb.com"
 	},
+	// Fleet API: https://adlmetfleet.adenmgb.com on the VPS (not this Worker).
 	"routes": [
 		{
 			"pattern": "api.adlmetbot.adenmgb.com",

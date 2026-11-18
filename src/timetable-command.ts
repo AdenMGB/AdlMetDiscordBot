@@ -112,8 +112,7 @@ export async function handleTimetableCommand(
 		return json({
 			type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
 			data: {
-				content:
-					"Timetable data is not configured on this Worker (missing D1 binding).",
+				content: "Timetables aren’t set up on this bot yet.",
 				flags: InteractionResponseFlags.EPHEMERAL,
 			},
 		});
@@ -182,9 +181,9 @@ export async function handleTimetableCommand(
 		const imported = await getGtfsMeta(db, "imported_at");
 		const hint = imported
 			? reference.custom
-				? "No scheduled departures after that **time/date** in the cached feed for this stop. If you chose an earlier time today, re-run `pnpm run import-gtfs --apply-remote` so the full day is cached."
-				: "No upcoming departures in the cached feed for this stop — the schedule may have ended for today."
-			: "GTFS data has not been imported yet. Run `pnpm run import-gtfs` and apply it to D1.";
+				? "Nothing scheduled after that **time/date** at this stop in our cached timetable."
+				: "No more departures listed for this stop — the day’s service may have finished."
+			: "Timetable data hasn’t been loaded yet. Ask an admin to refresh the schedule.";
 		return json({
 			type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
 			data: {

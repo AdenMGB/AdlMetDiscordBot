@@ -3,6 +3,7 @@ import {
 	classifyAlertMode,
 	DISCORD_MESSAGE_EMBED_CHAR_MAX,
 	filterAlertsByMode,
+	serviceAlertDedupeId,
 	formatAlertDiscordPayload,
 	isAlertMode,
 	isRailAlert,
@@ -69,6 +70,24 @@ describe("service alerts filter", () => {
 		expect(isAlertMode("metro")).toBe(false);
 		expect(filterAlertsByMode([sample], "bus")).toHaveLength(1);
 		expect(filterAlertsByMode([sample], "train")).toHaveLength(0);
+	});
+
+	it("uses stable dedupe ids for the same feed entity", () => {
+		const alert: ServiceAlert = {
+			id: "alert-42",
+			header: "Detour",
+			description: "",
+			routeIds: ["751"],
+			lineIds: [],
+			mode: "bus",
+			causeLabel: "Maintenance",
+			effectLabel: "Detour",
+			active: true,
+		};
+		expect(serviceAlertDedupeId(alert)).toBe("gtfs:alert-42");
+		expect(serviceAlertDedupeId({ ...alert, id: "" })).toBe(
+			serviceAlertDedupeId({ ...alert, id: "" }),
+		);
 	});
 
 	it("keeps combined embed text under Discord message limit", () => {

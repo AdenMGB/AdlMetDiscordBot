@@ -96,11 +96,11 @@ Slash commands use the **Interactions** endpoint; ordinary channel messages (inc
 cp apps/discord-ai-runner/.env.example apps/discord-ai-runner/.env
 # DISCORD_BOT_TOKEN, NVIDIA_API_KEY
 pnpm install
-chmod +x apps/discord-ai-runner/scripts/install-ubuntu.sh
-./apps/discord-ai-runner/scripts/install-ubuntu.sh
+chmod +x scripts/install-pm2-ubuntu.sh
+./scripts/install-pm2-ubuntu.sh
 ```
 
-See `apps/discord-ai-runner/README.md`. Dev without systemd: `pnpm discord-ai-runner:dev`.
+See `apps/discord-ai-runner/README.md`. Dev without PM2: `pnpm discord-ai-runner:dev`.
 
 **Legacy relay** (forwards mentions to the Worker):
 
@@ -118,28 +118,23 @@ export NVIDIA_API_KEY='…'
 python3 scripts/nvidia_chat.py "one fact about the Gawler line"
 ```
 
-### Disruption posts (Ubuntu cron)
+### Ubuntu edge (PM2)
 
-`ALERTS_CHANNEL_ID` and `DISRUPTIONS_ROLE_ID` are in `wrangler.jsonc` (override via secrets if needed).
-
-1. Deploy, then set `ALERTS_CRON_SECRET` (or reuse `SETUP_SECRET`):
-
-```powershell
-pnpm wrangler secret put ALERTS_CRON_SECRET
-pnpm wrangler d1 migrations apply adlmetbot-gtfs --remote
-```
-
-2. On your Ubuntu box:
+On the VPS (`~/AdlMetDiscordBot`), PM2 runs the Discord AI runner, rail fleet store, and **alerts push** (every 5 minutes via `cron_restart`, not user crontab):
 
 ```bash
-chmod +x scripts/push-alerts-cron.sh scripts/install-alerts-cron.sh
-# edit .alerts-cron.env with ALERTS_CRON_SECRET
-./scripts/install-alerts-cron.sh
+pnpm install
+# apps/discord-ai-runner/.env, apps/rail-fleet-store/.env, .alerts-cron.env
+chmod +x scripts/install-pm2-ubuntu.sh
+./scripts/install-pm2-ubuntu.sh
+pm2 status
 ```
 
-Every **5 minutes** the cron job calls `POST /alerts/push`, which posts **new** train, bus, and tram alerts to the disruptions channel and pings **Disruptions Alerts**.
+`ALERTS_CHANNEL_ID` and `DISRUPTIONS_ROLE_ID` are in `wrangler.jsonc`. Set `ALERTS_CRON_SECRET` in `.alerts-cron.env` and on the Worker (`pnpm wrangler secret put ALERTS_CRON_SECRET`).
 
-Manual test: `./scripts/push-alerts-cron.sh`
+Manual alerts test: `./scripts/push-alerts-cron.sh`
+
+Live fleet API: **`https://adlmetfleet.adenmgb.com/health`**. CF sync: **`https://api.adlmetbot.adenmgb.com/sync`**.
 
 ### Timetable data (D1 + GTFS)
 
